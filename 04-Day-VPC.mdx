@@ -1,0 +1,137 @@
+## VPC
+
+A VPC is a logically isolated virtual network in AWS that provides full control over networking, security, and resource deployment.
+
+
+### Example
+
+When you create a VPC in Amazon Web Services, you control:
+
+- IP address range
+- Subnets
+- Routing
+- Security
+
+![image](https://github.com/iam-veeramalla/aws-devops-zero-to-hero/assets/43399466/12cc10b6-724c-42c9-b07b-d8a7ce124e24)
+
+By default, when you create an AWS account, AWS will create a default VPC for you but this default VPC is just to get started with AWS. You should create VPCs for applications or projects. 
+
+
+### Why VPC is Important?
+
+- Without VPC → everything would be public ❌
+- With VPC → you get:
+  - Isolation → your network is separate
+  - Security → control inbound and outbound traffic
+  - Customization → design your own network architecture
+
+## VPC Core Components (Interview Explanation)
+
+### 1. CIDR Block
+
+CIDR block defines the IP address range of the VPC.
+
+Example: `10.0.0.0/16`
+
+In interview:
+**“CIDR block is used to allocate IP range for the VPC, which helps in designing the network structure.”**
+
+
+### 2. Subnets
+
+Subnets divide the VPC into smaller networks.
+
+* Public Subnet → has internet access
+* Private Subnet → no direct internet access
+
+In interview:
+**“Subnets help in organizing resources and separating public and private workloads for security.”**
+
+
+### 3. Internet Gateway (IGW)
+
+A component that allows communication between VPC and the internet.
+
+In interview:
+**“Internet Gateway enables resources in the public subnet to access the internet.”**
+
+
+### 4. Route Tables
+
+Route tables control the traffic flow within the VPC.
+
+Example:
+
+* `0.0.0.0/0 → IGW`
+
+In interview:
+**“Route tables define how traffic is routed inside the VPC and to external networks.”**
+
+
+### 5. NAT Gateway
+
+Allows instances in private subnet to access the internet for outbound traffic only.
+
+Mask the private IP address of the instance and replace it with the public IP address of the NAT gateway.
+
+In interview:
+**“NAT Gateway is used to provide secure outbound internet access for private instances without exposing them publicly.”**
+
+
+### 6. Security Groups
+
+Acts as a firewall at the instance level.
+
+* Stateful
+* Controls inbound and outbound traffic
+
+In interview:
+**“Security Groups control traffic at the instance level and are stateful in nature.”**
+
+
+### 7. Network ACL (NACL)
+
+Acts as a firewall at the subnet level.
+
+* Stateless
+
+In interview:
+**“NACL provides an additional layer of security at the subnet level and works in a stateless manner.”**
+
+
+### 8. VPC Peering
+
+Connects two VPCs privately.
+
+In interview:
+**“VPC Peering allows communication between two VPCs using private IP addresses.”**
+
+
+### 9. VPN / Direct Connect
+
+Used to connect on-premise infrastructure to AWS.
+
+In interview:
+**“VPN or Direct Connect is used to establish secure connectivity between on-premise data centers and AWS VPC.”**
+
+
+### Final Interview Summary
+
+**“A VPC consists of CIDR blocks, subnets, route tables, internet gateway, NAT gateway, security groups, and NACLs, which together help in building a secure and scalable network architecture in AWS.”**
+
+### VPC Flow Logs
+
+VPC flow logs are a feature that allows you to log all the traffic that flows through your VPC.
+This can be useful for debugging, monitoring, and security.
+
+In interview:
+**“VPC flow logs are used to log all the traffic that flows through your VPC.”**
+
+
+## Resources 
+
+VPC with servers in private subnets and NAT
+
+https://docs.aws.amazon.com/vpc/latest/userguide/vpc-example-private-subnets-nat.html
+
+![image](https://github.com/iam-veeramalla/aws-devops-zero-to-hero/assets/43399466/89d8316e-7b70-4821-a6bf-67d1dcc4d2fb)

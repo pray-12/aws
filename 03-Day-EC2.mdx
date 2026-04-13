@@ -151,3 +151,34 @@ Differentiating between On-Demand, Reserved, and Spot instances.
 - Starting, stopping, and terminating instances.
 - Monitoring instance performance and utilization.
 - Basic troubleshooting and accessing instances using SSH (Secure Shell).
+
+## Connecting remotely to an EC2 instance
+
+1. Run commands on the terminal to connect to the instance.
+```bash
+chmod 600 "my-key-pair.pem"
+ssh -i "my-key-pair.pem" ubuntu@ec2-instance-public-ip
+```
+2. Run commands on the instance.
+```bash
+sudo apt update
+sudo apt install nginx
+sudo systemctl start nginx
+sudo systemctl status nginx
+```
+
+3. Stop the instance.
+
+```bash
+sudo systemctl stop nginx
+```
+
+4. Security Groups- A security group acts as a virtual firewall for your EC2 instance, controlling inbound and outbound traffic.
+
+|Security Group|Firewall|
+|:--------------|:-------------|
+|Controls inbound traffic|Controls outbound traffic|
+
+1. **Inbound Rules**: These rules control who is allowed to connect to your server.
+
+2. **Outbound Rules**: These rules control who your server can connect to.
