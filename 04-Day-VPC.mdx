@@ -201,3 +201,74 @@ A default route in a route table directs traffic to the Internet Gateway (IGW), 
 
 ### 20. What is the purpose of the Amazon VPC Endpoint?
 An Amazon VPC Endpoint enables you to privately connect your VPC to supported AWS services and VPC endpoint services without needing an internet gateway or VPN connection.
+
+### 21. VPC architecture?
+```bash
+                🌍 Internet
+                     │
+            ┌──────────────────┐
+            │ Internet Gateway │
+            └──────────────────┘
+                     │
+        ┌──────────────────────────────┐
+        │            VPC               │
+        │  (CIDR: 10.0.0.0/16)        │
+        │                              │
+        │   ┌──────────────────────┐   │
+        │   │   Public Subnet      │   │
+        │   │  (10.0.1.0/24)       │   │
+        │   │                      │   │
+        │   │  🌐 EC2 (Web Server)│◄───┘
+        │   └──────────────────────┘
+        │            │
+        │            │ (via NAT Gateway)
+        │            ▼
+        │   ┌──────────────────────┐
+        │   │   Private Subnet     │
+        │   │  (10.0.2.0/24)       │
+        │   │                      │
+        │   │  🔒 RDS (Database)   │
+        │   └──────────────────────┘
+        │
+        └──────────────────────────────┘
+```
+
+#### 1. 🌍 Internet Gateway (IGW)
+- Connects VPC to the internet
+- Only public subnet resources can access internet through IGW
+#### 2. 🌐 Public Subnet
+- Contains Web Server (EC2)
+Has:
+- Public IP
+- Route to Internet Gateway
+
+👉 Users from internet → access web server here
+
+#### 3. 🔒 Private Subnet
+- Contains Database (RDS)
+- No direct internet access ❌
+- More secure zone
+#### 4. 🔁 NAT Gateway
+- Placed in public subnet
+- Allows private subnet resources to:
+- Access internet (for updates, patches)
+- But no inbound access from internet
+
+👉 Private → Internet ✅
+👉 Internet → Private ❌
+
+### 5. 🛡️ Security Layers
+- Security Groups → instance-level firewall
+- NACLs → subnet-level firewall
+
+### 🎯 Real-Time Flow (Very Important for Interview)
+
+- 👉 Step 1: User hits website
+→ Request goes through Internet Gateway
+
+- 👉 Step 2: Reaches Web Server (Public Subnet)
+
+- 👉 Step 3: Web server fetches data
+→ Connects to Database (Private Subnet)
+
+- 👉 Step 4: Response sent back to user
