@@ -1,0 +1,136 @@
+## AWS Security using Security Groups and NACL
+
+### 🔹 1. What is a Security Group?
+
+A **Security Group** acts as a virtual firewall at the **instance level**.
+
+It controls inbound and outbound traffic to AWS resources like EC2.
+
+#### Key Points:
+- Operates at **instance level**
+- **Stateful**
+  - If inbound traffic is allowed, response is automatically allowed
+- Supports **only Allow rules**
+- Evaluates **all rules together**
+
+#### Example:
+If port 22 (SSH) is allowed from your IP, you can connect to the instance, and the return traffic is automatically allowed.
+
+### 🔹 2. What is NACL (Network ACL)?
+
+A **Network ACL (NACL)[Network Access Control List]** acts as a firewall at the **subnet level**.
+
+It controls traffic entering and leaving a subnet.
+
+#### Key Points:
+- Operates at **subnet level**
+- **Stateless**
+  - Must explicitly allow both inbound and outbound traffic
+- Supports **Allow and Deny rules**
+- Rules are processed in **numerical order (lowest first)**
+
+#### Example:
+If inbound port 80 is allowed, outbound ephemeral ports (1024–65535) must also be allowed for proper communication.
+
+### 🔥 3. Key Differences
+
+| Feature            | Security Group            | NACL                          |
+|-------------------|--------------------------|-------------------------------|
+| Level             | Instance level           | Subnet level                  |
+| State             | Stateful                 | Stateless                     |
+| Rules             | Allow only               | Allow & Deny                 |
+| Rule Evaluation   | All rules evaluated      | Processed in order           |
+| Return Traffic    | Automatically allowed    | Must be explicitly allowed   |
+
+### 🧠 4. How They Work Together
+
+- **Security Group** → Instance-level protection  
+- **NACL** → Subnet-level protection  
+
+> Both must allow traffic for it to pass.
+
+---
+
+### 🎯 5. Real-Time Scenario
+
+Suppose you have a web server in a public subnet:
+
+#### NACL:
+- Allow inbound HTTP (port 80) from anywhere
+- Allow outbound ephemeral ports (1024–65535)
+
+#### Security Group:
+- Allow inbound HTTP (port 80) from `0.0.0.0/0`
+
+If either blocks traffic, the request will fail.
+
+### ⚡ 6. When to Use What?
+
+#### Use Security Groups:
+- Instance-level control
+- Daily usage
+- Most common scenarios
+
+#### Use NACL:
+- Additional security layer
+- Blocking specific IPs (Deny rules)
+
+### 🚀 7. One-Line Summary
+
+> Security Groups are stateful instance-level firewalls, whereas NACLs are stateless subnet-level firewalls with both allow and deny rules.
+
+### 💡 Pro Tip
+
+Security Groups are sufficient for most use cases.  
+NACLs are mainly used for coarse-grained control or explicit deny scenarios.
+
+## Project Implemented in the video
+
+
+![Screenshot 2023-06-29 at 12 14 32 AM](https://github.com/iam-veeramalla/aws-devops-zero-to-hero/assets/43399466/30bbc9e8-6502-438b-8adf-ece8b81edce9)
+
+1. Create a VPC.
+    - slect vpc and more options.
+    - name as "my-vpc"
+    - cidr block as "10.0.0.0/16" - will get 65536 IP addresses.
+    - We can change availablity  zone as "us-east-1a" or "us-east-1b" or "us-east-1c" etc.
+    - Create VPC.
+2. Create a EC2 instance.
+    - select ec2 and more options.
+    - name as "my-ec2"
+    - instance type as "t2.micro"
+    - key pair as "my-key-pair"
+    - Network settings:
+        - VPC: "my-vpc"
+        - Subnet: "public-subnet"
+        - auto assign public ip: "enable"
+        - security group: "my-security-group"
+    - create instance.
+    - Update the  instance with the following details:
+    ```bash
+    sudo apt update
+    python3 --version
+    ```
+    - install pip
+    ```bash
+    sudo apt install python3-pip
+    ```
+    - Run the command to start a simple http server.
+    ```bash
+    python3 -m http.server 8000
+    ```
+    - Open the browser and go to the instance public ip address and port 8000.
+    - It will not work because we haven't allowed the traffic to the instance.
+    - Create a security group.
+    - name as "my-security-group"
+    - add inbound rule to allow traffic on port 8000 from anywhere.
+    - add outbound rule to allow all traffic to the internet.
+    - create security group.
+    - attach the security group to the instance.
+    - start the instance.
+    - open the browser and go to the instance public ip address and port 8000.
+
+Note: When we add NACL,  rule number will be assigned automatically in ascending order. If  100 rule number is deny, and rule 50 is allow, then rule 50 will be applied first.
+
+### Story of port 25
+Port 25 is used for SMTP (Simple Mail Transfer Protocol) which is used to send and receive emails. We can't use this port for security reasons.

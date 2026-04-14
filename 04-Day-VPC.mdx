@@ -27,7 +27,7 @@ By default, when you create an AWS account, AWS will create a default VPC for yo
 
 ## VPC Core Components (Interview Explanation)
 
-### 1. CIDR Block
+### 1. CIDR Block [Classless Inter-Domain Routing] - IP Address Range
 
 CIDR block defines the IP address range of the VPC.
 
@@ -98,6 +98,10 @@ Acts as a firewall at the subnet level.
 In interview:
 **“NACL provides an additional layer of security at the subnet level and works in a stateless manner.”**
 
+|Stateful|Stateless|
+|:--------------|:-------------|
+|Remember what traffic has been allowed in the past|Forget what traffic has been allowed in the past|
+|Example: If you allow traffic from 10.0.0.0/24, then all traffic from 10.0.0.0/24 will be allowed|Example: If you allow traffic from 10.0.0.0/24, then you need to allow traffic from 10.0.0.0/24 to 10.0.0.0/24|
 
 ### 8. VPC Peering
 
@@ -112,6 +116,7 @@ In interview:
 Used to connect on-premise infrastructure to AWS.
 
 In interview:
+
 **“VPN or Direct Connect is used to establish secure connectivity between on-premise data centers and AWS VPC.”**
 
 
@@ -122,6 +127,7 @@ In interview:
 ### VPC Flow Logs
 
 VPC flow logs are a feature that allows you to log all the traffic that flows through your VPC.
+
 This can be useful for debugging, monitoring, and security.
 
 In interview:
