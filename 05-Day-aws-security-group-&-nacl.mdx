@@ -139,3 +139,5 @@ Port 25 is used for SMTP (Simple Mail Transfer Protocol) which is used to send a
  scp -i "my-key-pair.pem" ubuntu@ec2-instance-public-ip:/home/ubuntu/file.txt
 ```
 This command is used to copy a file from the local machine to the EC2 instance.
+
+Port 25 is used for SMTP, but it is restricted in modern environments due to spam and security risks. Instead, secure ports like 587 or 465 are used with authentication and encryption.
