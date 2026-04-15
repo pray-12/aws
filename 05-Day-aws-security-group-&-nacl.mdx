@@ -134,3 +134,8 @@ Note: When we add NACL,  rule number will be assigned automatically in ascending
 
 ### Story of port 25
 Port 25 is used for SMTP (Simple Mail Transfer Protocol) which is used to send and receive emails. We can't use this port for security reasons.
+
+```bash
+ scp -i "my-key-pair.pem" ubuntu@ec2-instance-public-ip:/home/ubuntu/file.txt
+```
+This command is used to copy a file from the local machine to the EC2 instance.

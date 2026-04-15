@@ -182,3 +182,41 @@ sudo systemctl stop nginx
 1. **Inbound Rules**: These rules control who is allowed to connect to your server.
 
 2. **Outbound Rules**: These rules control who your server can connect to.
+
+### Auto Scaling Group
+
+Auto Scaling Group is a feature that allows you to automatically scale your EC2 instances based on the demand.
+
+#### It ensures you have:
+
+- Enough servers when traffic increases
+- Fewer servers when traffic drops
+
+So your app stays fast and you don’t pay for unused resources.
+
+#### How it works
+1. You create an **Auto Scaling Group (ASG)**
+2. You define:
+    - Minimum number of instances
+    - Maximum number of instances
+    - Desired capacity
+3. Set **scaling policies**, for example:
+    - Add servers when CPU usage > 70%
+    - Remove servers when CPU usage < 30%
+4. Types of scaling
+    - Dynamic scaling → reacts to real-time demand
+    - Scheduled scaling → scales at specific times (e.g., peak hours)
+    - Predictive scaling → uses machine learning to forecast demand
+
+#### Example
+
+Imagine a **shopping website**:
+
+- During a sale → traffic spikes → Auto Scaling adds servers
+- After the sale → traffic drops → Auto Scaling removes extra servers
+
+#### Why we use standalone Amazon EC2 instance instead of Amazon EC2 Auto Scaling?
+
+“We use a standalone Amazon EC2 instance when the application is simple, has predictable traffic, or is in development. It’s easier to set up, cheaper for small workloads, and gives full control.
+
+On the other hand, Amazon EC2 Auto Scaling is used for production systems where traffic can vary, because it provides high availability, fault tolerance, and automatic scaling.”
