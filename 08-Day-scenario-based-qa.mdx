@@ -1,0 +1,66 @@
+# Scenario Based Interview Questions on EC2, IAM and VPC
+
+
+## 1. You have been assigned to design a VPC architecture for a 2-tier application. The application needs to be highly available and scalable. How would you design the VPC architecture?
+
+**Answer:** In this scenario, I would design a VPC architecture in the following way.
+   - I would create 2 subnets: public and private. The public subnet would contain the load balancers and be accessible from the internet. The private subnet would host the application servers. 
+   - I would distribute the subnets across multiple Availability Zones for high availability. 
+   - Additionally, I would configure auto scaling groups for the application servers for scaling the application based on the demand.
+
+## 2. Your organization has a VPC with multiple subnets. You want to restrict outbound internet access for resources in one subnet, but allow outbound internet access for resources in another subnet. How would you achieve this?
+
+- **Answer:** To control outbound internet access, I would use separate route tables for each subnet. For the subnet that requires internet access, I would associate a route table that contains a default route (0.0.0.0/0) pointing to an Internet Gateway.
+- For the subnet where internet access should be restricted, I would associate a route table without a default route to the Internet Gateway, effectively blocking outbound internet traffic.
+
+## 3. You have a VPC with a public subnet and a private subnet. Instances in the private subnet need to access the internet for software updates. How would you allow internet access for instances in the private subnet?
+
+- To allow instances in a private subnet to access the internet, I would use a NAT Gateway placed in a public subnet. The public subnet must have a route to an Internet Gateway. 
+
+- Then, I would update the private subnet’s route table to send outbound traffic (0.0.0.0/0) to the NAT Gateway. This allows instances in the private subnet to access the internet for updates while preventing inbound internet access.
+
+## 4. You have launched EC2 instances in your VPC, and you want them to communicate with each other using private IP addresses. What steps would you take to enable this communication?
+
+Instances within the same Amazon VPC can communicate using private IP addresses by default because the VPC route table contains a local route that allows internal traffic. To enable communication, I would ensure that both instances are in the same VPC and verify that their Security Groups allow the required inbound and outbound traffic. No Internet Gateway or VPC Peering is required for communication within the same VPC.
+
+## 5. You want to implement strict network access control for your VPC resources. How would you achieve this?
+
+To implement strict network access control in a Amazon VPC, I would use a layered approach. At the subnet level, I would configure Network ACLs to define both allow and explicit deny rules for inbound and outbound traffic. At the instance level, I would use Security Groups, which are stateful, to allow only required traffic. This combination provides defense-in-depth and ensures strict control over network access.
+
+## 6. Your organization requires an isolated environment within the VPC for running sensitive workloads. How would you set up this isolated environment?
+
+To create an isolated environment in a Amazon VPC, I would create a subnet and associate it with a route table that does not have a default route (0.0.0.0/0) to an Internet Gateway or a NAT Gateway. This ensures that the subnet has no inbound or outbound internet connectivity. I would place sensitive workloads in this subnet and further restrict access using Security Groups and optionally Network ACLs for additional control
+
+```bash
+Isolated = No IGW + No NAT
+Private  = NAT only
+Public   = IGW
+```
+
+## 7. Your application needs to access AWS services, such as S3 securely within your VPC. How would you achieve this?
+
+“To securely access AWS services like Amazon S3 from within a Amazon VPC, I would use VPC Endpoints. This allows instances to communicate with AWS services privately without using an Internet Gateway or NAT Gateway. For services like S3 and DynamoDB, I would use a Gateway Endpoint and associate it with the route table. For other AWS services, I would use Interface Endpoints, which create Elastic Network Interfaces within the subnet. This ensures secure, private, and efficient communication.”
+
+## 8. What is the difference between NACL and Security groups ? Explain with a use case ?
+
+| Feature        | Security Groups | NACLs                      |
+| -------------- | --------------- | -------------------------- |
+| Level          | Instance        | Subnet                     |
+| Type           | Stateful        | Stateless                  |
+| Rules          | Allow only      | Allow + Deny               |
+| Return traffic | Auto allowed    | Must be allowed explicitly |
+
+
+## 9. What is the difference between IAM users, groups, roles and policies ?
+
+- IAM User: An IAM user is an identity within AWS that represents an individual or application needing access to AWS resources. IAM users have permanent long-term credentials, such as a username and password, or access keys (Access Key ID and Secret Access Key). IAM users can be assigned directly to IAM policies or added to IAM groups for easier management of permissions.
+- IAM Role: An IAM role is similar to an IAM user but is not associated with a specific individual. Instead, it is assumed by entities such as IAM users, applications, or services to obtain temporary security credentials. IAM roles are useful when you want to grant permissions to entities that are external to your AWS account or when you want to delegate access to AWS resources across accounts. IAM roles have policies attached to them that define the permissions granted when the role is assumed.
+- IAM Group: An IAM group is a collection of IAM users. By organizing IAM users into groups, you can manage permissions collectively. IAM groups make it easier to assign permissions to multiple users simultaneously. Users within an IAM group inherit the permissions assigned to that group. For example, you can create a "Developers" group and assign appropriate policies to grant permissions required for developers across your organization.
+- IAM Policy: An IAM policy is a document that defines permissions and access controls in AWS. IAM policies can be attached to IAM users, IAM roles, and IAM groups to define what actions can be performed on which AWS resources. IAM policies use JSON (JavaScript Object Notation) syntax to specify the permissions and can be created and managed independently of the users, roles, or groups. IAM policies consist of statements that include the actions allowed or denied, the resources on which the actions can be performed, and any additional conditions.
+
+## 10. You have a private subnet in your VPC that contains a number of instances that should not have direct internet access. However, you still need to be able to securely access these instances for administrative purposes. How would you set up a bastion host to facilitate this access?
+
+  - Create a new EC2 instance in a public subnet, which will serve as the bastion host. Ensure that this instance has a public IP address or is associated with an Elastic IP address for persistent access.
+  - Configure the security group for the bastion host to allow inbound SSH (or RDP for Windows) traffic from your IP address or a restricted range of trusted IP addresses. This limits access to the bastion host to authorized administrators only.
+  - Place the instances in the private subnet and configure their security groups to allow inbound SSH (or RDP) traffic from the bastion host security group.
+  - SSH (or RDP) into the bastion host using your private key or password. From the bastion host, you can then SSH (or RDP) into the instances in the private subnet using their private IP addresses.

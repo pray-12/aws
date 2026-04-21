@@ -1,0 +1,281 @@
+# AWS S3 [Simple Storage Service]
+
+
+## 1. What is Amazon S3?
+
+Amazon S3 is an **object storage service** that stores data as **objects inside buckets**, designed for **high durability**, **security**, **cost-effective & performance**, **scalability**, and **availability**.
+
+### Key Features of S3
+1. Durability & Availability
+    - 99.999999999% durability (11 9’s)
+    - Stores data across multiple AZs
+2. Storage Classes (VERY IMPORTANT)
+
+| Storage Class           | Use Case                         |
+| ----------------------- | -------------------------------- |
+| S3 Standard             | Frequently accessed data         |
+| S3 Intelligent-Tiering  | Auto moves data based on usage   |
+| S3 Standard-IA          | Infrequent access                |
+| S3 One Zone-IA          | Single AZ (low cost)             |
+| S3 Glacier              | Archival (cheap, slow retrieval) |
+| S3 Glacier Deep Archive | Long-term backup                 |
+
+3. Security
+    - Encryption at rest (SSE-S3, SSE-KMS, SSE-C)
+    - Encryption in transit (SSL/TLS)
+    - Access control (IAM policies, bucket policies, ACLs)
+4. Cost-effective & Performance
+    - Pay-as-you-go pricing
+    - Scalable storage
+    - High performance
+    - Low latency
+    - High availability
+    - High durability
+    - High security
+    - High scalability
+5. Versioning
+    - Stores multiple versions of the same object
+    - Can be used to restore previous versions
+    - Can be used to track, backup and restore changes
+6. Lifecycle Management
+    - Moves objects between storage classes
+    - Deletes objects after a certain period
+    - Can be used to optimize costs
+7. Replication
+    - Replicates objects to multiple regions
+    - Can be used to backup data
+    - Can be used to replicate data to multiple regions
+    - Can be used to replicate data to multiple regions
+8. Cross-Region Replication (CRR)
+- Copy data to another region automatically
+
+9. Event Notifications
+- Trigger actions when something happens
+
+👉 Example:
+
+- Upload file → trigger Lambda function
+- Delete file → trigger SNS notification
+
+9. CRR (Cross-Region Replication)
+- Copy data to another region automatically
+
+10. S3 Batch Operations
+- Perform bulk operations on objects
+
+Example:
+Copy objects to another region
+Delete objects after a certain period
+
+11. Static website hosting
+- Host a static website in S3
+
+## Important Interview Points
+    - S3 is region-specific
+    - Strong consistency (after updates)
+    - Highly scalable
+    - No need to manage servers
+### What can you store in S3?
+- Text files
+- Images
+- Videos
+- Audio files
+- Documents
+- Spreadsheets
+- Databases
+- Applications
+
+
+## 2. Components of S3
+
+### 1. S3 Buckets
+
+S3 buckets are containers for storing objects (files) in Amazon S3. 
+
+- Top-level container
+- Globally unique name
+- Region-specific
+
+👉 Example: `my-app-logs-bucket`
+
+### 2. Object
+
+- Actual file stored in S3
+- Consists of:
+    - Data (file)
+    - Metadata
+    - Key (name/path)
+
+👉 Example: `images/photo.jpg`
+
+### 3. Key
+Unique identifier inside bucket
+Works like file path
+
+#### Why use S3 buckets?
+
+S3 buckets provide a reliable and highly scalable storage solution for various use cases. They are commonly used for backup and restore, data archiving, content storage for websites, and as a data source for big data analytics.
+
+#### Key benefits of S3 buckets
+
+S3 buckets offer several advantages, including:
+
+    - **Durability and availability**: S3 provides high durability and availability for your data.
+    - **Scalability**: You can store and retrieve any amount of data without worrying about capacity constraints.
+    - **Security**: S3 offers multiple security features such as encryption, access control, and audit logging.
+    - **Performance**: S3 is designed to deliver high performance for data retrieval and storage operations.
+    - **Cost-effective**: S3 offers cost-effective storage options and pricing models based on your usage patterns.
+
+## Creating and Configuring S3 Buckets
+
+Creating an S3 bucket:
+- Select the S3 service
+- Click on "Create bucket"
+- Enter the bucket name
+- Select the region (e.g., us-east-1)
+- click on `block public access settings for this bucket`, so that the bucket is not accessible to the public.
+- enable versioning, so that you can restore previous versions of the files.
+- enable encryption, so that the data is encrypted at rest.
+- Click on "Create bucket"
+
+## Bucket permissions
+
+### Everyone in the organization can access the bucket condition they should have access to the bucket.
+
+- Create an IAM user.
+- attach policy `AmazonS3FullAccess` to the user.
+- I am able to access the bucket and upload files to it.
+
+### Even if the user has AmazonS3FullAccess policy, I don't want to give access to the bucket to the user.
+
+- Go to S3 bucket.
+- Click on "Permissions".
+- Click on "Bucket Policy".
+- Add the following policy:
+```json
+{
+  "Version": "2012-10-17",
+  "Id": "RestrictBucketToIAMUsersOnly",
+  "Statement": [
+    {
+      "Sid": "AllowOwnerOnlyAccess",
+      "Effect": "Deny",
+      "Principal": "*",
+      "Action": "s3:*",
+      "Resource": [
+        "arn:aws:s3:::your-bucket-name/*",
+        "arn:aws:s3:::your-bucket-name"
+      ],
+      "Condition": {
+        "StringNotEquals": {
+          "aws:PrincipalArn": "arn:aws:iam::AWS_ACCOUNT_ID:root"
+        }
+      }
+    }
+  ]
+}
+```
+- Add this condition to the policy so that atleast owner should have access to the bucket.
+![Bucket Policy](/images/condition.png)
+- Click on "Save".
+- Now the user will not be able to access the bucket.
+
+### Even if the user has AmazonS3FullAccess policy, I don't want to give access to the bucket to the user.
+
+- Go to S3 bucket.
+- Click on "Permissions".
+- Click on "Bucket Policy".
+
+## How to host a static website in S3?
+
+- Go to S3 bucket.
+- Click on "Properties".
+- Click on "Static website hosting".
+- Click on "Enable".
+- Index document: index.html
+- Error document: error.html
+- Click on "Save".
+
+We will get forbidden error because we have told `block public access settings for this bucket`.
+Add the following policy to the bucket policy:
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "PublicReadGetObject", # This is a unique identifier for the policy. We can give any name to it.
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": [
+                "s3:GetObject"
+            ],
+            "Resource": [
+                "arn:aws:s3:::<Bucket-Name>/*"
+            ]
+        }
+    ]
+}
+```
+
+### 1. What is Amazon S3?
+Amazon Simple Storage Service (Amazon S3) is a scalable object storage service designed to store and retrieve any amount of data from anywhere on the web. It's commonly used to store files, backups, images, videos, and more.
+
+### 2. What are the key features of Amazon S3?
+Amazon S3 offers features like data durability, high availability, security options, scalable storage, and the ability to store data in different storage classes based on access patterns.
+
+### 3. What is an S3 bucket?
+An S3 bucket is a container for storing objects, which can be files, images, videos, and more. Each object in S3 is identified by a unique key within a bucket.
+
+### 4. How can you control access to objects in S3?
+Access to S3 objects can be controlled using bucket policies, access control lists (ACLs), and IAM (Identity and Access Management) policies. You can define who can read, write, and delete objects.
+
+### 5. What is the difference between S3 Standard, S3 Intelligent-Tiering, and S3 One Zone-IA storage classes?
+- S3 Standard: Offers high durability, availability, and performance.
+- S3 Intelligent-Tiering: Automatically moves objects between two access tiers based on changing access patterns.
+- S3 One Zone-IA: Stores objects in a single availability zone with lower storage costs, but without the multi-AZ resilience of S3 Standard.
+
+### 6. How does S3 provide data durability?
+S3 provides 99.999999999% (11 9's) durability by automatically replicating objects across multiple facilities within a region.
+
+### 7. What is Amazon S3 Glacier used for?
+Amazon S3 Glacier is a storage service designed for data archiving. It offers lower-cost storage with retrieval times ranging from minutes to hours.
+
+### 8. How can you secure data in Amazon S3?
+You can secure data in Amazon S3 by using access control mechanisms, like bucket policies and IAM policies, and by enabling encryption using server-side encryption or client-side encryption.
+
+### 9. What is S3 versioning?
+S3 versioning is a feature that allows you to preserve, retrieve, and restore every version of every object in a bucket. It helps protect against accidental deletion and overwrites.
+
+### 10. What is a pre-signed URL in S3?
+A pre-signed URL is a URL that grants temporary access to an S3 object. It can be generated using your AWS credentials and shared with others to provide temporary access.
+
+### 11. How can you optimize costs in Amazon S3?
+You can optimize costs by using storage classes that match your data access patterns, utilizing lifecycle policies to transition objects to less expensive storage tiers, and setting up cost allocation tags for billing visibility.
+
+### 12. What is S3 Cross-Region Replication?
+S3 Cross-Region Replication is a feature that automatically replicates objects from one S3 bucket in one AWS region to another bucket in a different region.
+
+### 13. How can you automate the movement of objects between different storage classes?
+You can use S3 Lifecycle policies to automate the transition of objects between storage classes based on predefined rules and time intervals.
+
+### 14. What is the purpose of S3 event notifications?
+S3 event notifications allow you to trigger AWS Lambda functions or SQS queues when certain events, like object creation or deletion, occur in an S3 bucket.
+
+### 15. What is the AWS Snowball device?
+The AWS Snowball is a physical data transport solution used for migrating large amounts of data into and out of AWS. It's ideal for scenarios where the network transfer speed is not sufficient.
+
+### 16. What is Amazon S3 Select?
+Amazon S3 Select is a feature that allows you to retrieve specific data from an object using SQL-like queries, without the need to retrieve the entire object.
+
+### 17. What is the difference between Amazon S3 and Amazon EBS?
+Amazon S3 is object storage used for storing files, while Amazon EBS (Elastic Block Store) is block storage used for attaching to EC2 instances as volumes.
+
+### 18. How can you enable server access logging in Amazon S3?
+You can enable server access logging to track all requests made to your bucket. The logs are stored in a target bucket and can help analyze access patterns.
+
+### 19. What is S3 Transfer Acceleration?
+S3 Transfer Acceleration is a feature that speeds up transferring files to and from Amazon S3 by utilizing Amazon CloudFront's globally distributed edge locations.
+
+### 20. How can you replicate data between S3 buckets within the same region?
+You can use S3 Cross-Region Replication to replicate data between S3 buckets within the same region by specifying the same source and destination region.
