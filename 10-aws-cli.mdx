@@ -1,0 +1,198 @@
+# AWS CLI
+
+AWS CLI is a command-line tool used to automate and manage AWS services by executing commands directly from the terminal.
+
+It allows you to:
+
+- Automate tasks
+- Manage resources
+- Script infrastructure
+
+### Why AWS CLI is Important
+- Faster than console
+- Automation (used in scripts & CI/CD)
+- Repeatable infrastructure tasks
+- Essential for DevOps workflows
+
+Example: 
+
+1. Create a 20 EC2 instances in 20 different regions. This is a time-consuming task. We can use AWS CLI to automate this task using aws API.
+
+### How to install AWS CLI
+
+https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
+
+```bash
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+aws --version
+python3 --version
+```
+
+To configure the AWS CLI, we need to provide the following information:
+```bash
+aws configure
+```
+
+```bash
+AWS Access Key ID [None]: <your-access-key> # you can get it from the AWS Console click on user and then click on security credentials.
+Secret Access Key [None]: <your-secret-access-key>
+Region [None]: <your-region>
+Default output format [None]: json
+```
+
+```bash
+aws s3 ls
+```
+
+- Aws cli will translate this call to api call to s3 service.
+- Make the api call to s3 service.
+- Get the response from the s3 service.
+
+### Command to create a EC2 instance using AWS CLI
+
+```bash
+aws ec2 run-instances \
+  --image-id ami-0abcdef1234567890 \
+  --instance-type t2.micro \
+  --key-name my-key \
+  --security-group-ids sg-12345678 \
+  --subnet-id subnet-12345678 \
+  --count 1
+```
+
+```bash
+aws ec2 run-instances --dry-run ... # Checks permissions without creating instance
+aws ec2 run-instances # to get the list of instances.
+```
+
+## Common Commands (Must Know)
+
+### S3 
+
+```bash
+aws s3 ls # List all buckets.
+aws s3 mb s3://my-bucket # Create a new bucket.
+aws s3 cp file.txt s3://my-bucket # Upload a file to a bucket.
+aws s3 sync . s3://my-bucket # Sync a directory to a bucket.
+```
+
+### EC2
+
+```bash
+aws ec2 describe-instances # List all instances.
+aws ec2 run-instances # Create a new instance.
+aws ec2 stop-instances --instance-ids i-123456 # Stop an instance.
+aws ec2 start-instances --instance-ids i-123456 # Start an instance.
+aws ec2 terminate-instances --instance-ids i-123456 # Terminate an instance.
+```
+
+### IAM
+
+```bash
+aws iam list-users # List all users.
+aws iam create-user --user-name my-user # Create a new user.
+aws iam delete-user --user-name my-user # Delete a user.
+```
+
+### Profile
+
+```bash
+aws configure --profile <profile-name> # Create a new profile. Useful for multiple accounts. [dev]
+aws configure list-profiles # List all profiles.
+```
+
+### QueryFilter
+
+```bash
+aws ec2 describe-instances --query "Reservations[*].Instances[*].InstanceId"
+```
+
+## Automation Example
+
+```bash
+#!/bin/bash
+aws s3 sync /backup s3://my-bucket
+```
+
+Say this to stand out:
+
+👉 “AWS CLI is widely used in automation scripts and CI/CD pipelines to provision and manage infrastructure efficiently.”
+
+👉 “We prefer IAM roles over access keys for better security.”
+
+Difference between aws cli , terraform and cloudformation:
+
+| Feature          | AWS CLI      | Terraform   | CloudFormation |
+| ---------------- | ------------ | ----------- | -------------- |
+| Type             | Command tool | IaC tool    | IaC tool       |
+| Approach         | Imperative   | Declarative | Declarative    |
+| Cloud support    | AWS only     | Multi-cloud | AWS only       |
+| State management | ❌ No         | ✅ Yes       | ✅ Yes          |
+| Reusability      | ❌ Low        | ✅ High      | ✅ Medium       |
+| Learning curve   | Easy         | Medium      | Medium         |
+
+“AWS CLI is used for manual or scripted commands, while Terraform and CloudFormation are Infrastructure as Code tools used to provision and manage resources declaratively, with Terraform supporting multi-cloud and CloudFormation being AWS-native.”
+
+“In real projects, we often use Terraform for provisioning and AWS CLI inside CI/CD pipelines for automation tasks.”
+
+### 1. What is the AWS Command Line Interface (CLI)?
+The AWS Command Line Interface (CLI) is a unified tool that allows you to interact with various AWS services using command-line commands.
+
+### 2. Why would you use the AWS CLI?
+The AWS CLI provides a convenient way to automate tasks, manage AWS resources, and interact with services directly from the command line, making it useful for scripting and administration.
+
+### 3. How do you install the AWS CLI?
+You can install the AWS CLI on various operating systems using package managers or by downloading the installer from the AWS website.
+
+### 4. What is the purpose of AWS CLI profiles?
+AWS CLI profiles allow you to manage multiple sets of AWS security credentials, making it easier to switch between different accounts and roles.
+
+### 5. How can you configure the AWS CLI with your credentials?
+You can configure the AWS CLI by running the `aws configure` command, where you provide your access key, secret key, default region, and output format.
+
+### 6. What is the difference between IAM user-based credentials and IAM role-based credentials in the AWS CLI?
+IAM user-based credentials are long-term access keys associated with an IAM user, while IAM role-based credentials are temporary credentials obtained by assuming a role using the `sts assume-role` command.
+
+### 7. How can you interact with AWS services using the AWS CLI?
+You can interact with AWS services by using AWS CLI commands specific to each service. For example, you can use `aws ec2 describe-instances` to list EC2 instances.
+
+### 8. What is the syntax for AWS CLI commands?
+The basic syntax for AWS CLI commands is `aws <service-name> <operation> [options]`, where you replace `<service-name>` with the service you want to interact with and `<operation>` with the desired action.
+
+### 9. How can you list available AWS CLI services and commands?
+You can run `aws help` to see a list of AWS services and the corresponding commands available in the AWS CLI.
+
+### 10. What is the purpose of output formatting options in AWS CLI commands?
+Output formatting options allow you to specify how the results of AWS CLI commands are presented. Common options include JSON, text, table, and YAML formats.
+
+### 11. How can you filter and format AWS CLI command output?
+You can use filters like `--query` to extract specific data from AWS CLI command output, and you can use `--output` to choose the format of the output.
+
+### 12. How can you create and manage AWS resources using the AWS CLI?
+You can create and manage AWS resources using commands such as `aws ec2 create-instance` for EC2 instances or `aws s3 cp` to copy files to Amazon S3 buckets.
+
+### 13. How does AWS CLI handle pagination of results?
+Some AWS CLI commands return paginated results. You can use the `--max-items` and `--page-size` options to control the number of items displayed per page.
+
+### 14. What is the AWS SSO (Single Sign-On) feature in the AWS CLI?
+The AWS SSO feature in the AWS CLI allows you to authenticate and obtain temporary credentials using an AWS SSO profile, simplifying the management of credentials.
+
+### 15. Can you use the AWS CLI to work with AWS CloudFormation?
+Yes, you can use the AWS CLI to create, update, and delete CloudFormation stacks using the `aws cloudformation` commands.
+
+### 16. How can you debug AWS CLI commands?
+You can use the `--debug` option with AWS CLI commands to get detailed debug information, which can help troubleshoot issues.
+
+### 17. Can you use the AWS CLI in AWS Lambda functions?
+Yes, AWS Lambda functions can use the AWS CLI by packaging it with the function code and executing CLI commands from within the function.
+
+### 18. How can you secure the AWS CLI on your local machine?
+You can secure the AWS CLI on your local machine by using IAM roles, IAM user-based credentials, and the AWS CLI's built-in encryption mechanisms for configuration files.
+
+### 19. How can you update the AWS CLI to the latest version?
+You can update the AWS CLI to the latest version using package managers like `pip` (Python package manager) or by downloading the installer from the AWS website.
+
+### 20. How do you uninstall the AWS CLI?
+To uninstall the AWS CLI, you can use the package manager or the uninstaller provided by the installer you used to install it initially.
