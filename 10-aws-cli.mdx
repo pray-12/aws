@@ -153,7 +153,13 @@ AWS CLI profiles allow you to manage multiple sets of AWS security credentials, 
 You can configure the AWS CLI by running the `aws configure` command, where you provide your access key, secret key, default region, and output format.
 
 ### 6. What is the difference between IAM user-based credentials and IAM role-based credentials in the AWS CLI?
-IAM user-based credentials are long-term access keys associated with an IAM user, while IAM role-based credentials are temporary credentials obtained by assuming a role using the `sts assume-role` command.
+- IAM user-based credentials are **long-term static credentials** (access key and secret key) associated with a user in AWS Identity and Access Management.
+- IAM role-based credentials are **temporary credentials generated** when a role is assumed, usually via STS[security token service].
+
+**Role-based credentials are more secure because they automatically expire** and don’t require storing permanent keys.”
+IAM User → Developer running CLI from laptop
+
+IAM Role → EC2 instance accessing S3 without storing keys
 
 ### 7. How can you interact with AWS services using the AWS CLI?
 You can interact with AWS services by using AWS CLI commands specific to each service. For example, you can use `aws ec2 describe-instances` to list EC2 instances.
