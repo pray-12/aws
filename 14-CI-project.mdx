@@ -1,0 +1,103 @@
+# AWS Continuous Integration Demo
+
+![CI/CD Pipeline](/images/ci-cd-project/project.png)
+## Set Up GitHub Repository
+
+The first step in our CI journey is to set up a GitHub repository to store our Python application's source code. If you already have a repository, feel free to skip this step. Otherwise, let's create a new repository on GitHub by following these steps:
+
+- Go to github.com and sign in to your account.
+- Click on the "+" button in the top-right corner and select "New repository."
+- Give your repository a name and an optional description.
+- Choose the appropriate visibility option based on your needs.
+- Initialize the repository with a README file.
+- Click on the "Create repository" button to create your new GitHub repository.
+
+Great! Now that we have our repository set up, we can move on to the next step.
+
+## Prerequisites
+ - to run the project, we need to have the following prerequisites:
+    - Create a IAM user, beacuse we will be using the AWS CLI to interact with the AWS services.
+    - Policy: `AWSSMFullAccess`
+
+**Note:** AWS CodePipeline invokes the AWS CodeBuild service to build the project.
+
+## CodeBuild
+
+- Go to Console and create a build project.
+- Name the build project as "MyBuildProject".
+![CodeBuild](/images/ci-cd-project/image-1.png)
+- Select the source type as "GitHub".
+-  You will get error `You have not connected your GitHub`.
+  -  Click on  `Manage account credentials`.
+  - Get connected to your GitHub account by clicking on `Create a new github connection`.
+![](/images/ci-cd-project/image-2.png)
+- Environment:
+  - Select the operating system as "Ubuntu".
+  - Service role [New service role] as "codebuild-MyBuildProject-service-role".
+![](/images/ci-cd-project/image-3.png)
+- Build spec:
+  - click Insert build commands >  Switch to editor mode.
+  - Write this `build.yaml` file:
+```yaml
+version: 0.2
+
+env: # this is used to store the environment variables.
+  parameter-store: # this is used to store the credentials in the parameter store.
+    DOCKER_REGISTRY_USERNAME: /myapp/docker-credentials/username # this is the username for the docker registry.
+    DOCKER_REGISTRY_PASSWORD: /myapp/docker-credentials/password # this is the password for the docker registry.
+    DOCKER_REGISTRY_URL: /myapp/docker-registry/url # this is the url for the docker registry.
+phases: # this is used to define the phases of the build.
+  install: # this is the first phase of the build.
+    runtime-versions:
+      python: 3.11
+  pre_build: # this is the second phase of the build.
+    commands:
+      - echo "Installing dependencies..." # this is the command to install the dependencies.
+      - pip install -r requirements.txt # this is the command to install the dependencies.
+  build: # this is the third phase of the build.
+    commands:
+      - echo "Running tests..."
+      - echo "Building Docker image..."
+      - echo "$DOCKER_REGISTRY_PASSWORD" | docker login -u "$DOCKER_REGISTRY_USERNAME" --password-stdin "$DOCKER_REGISTRY_URL"
+      - docker build -t "$DOCKER_REGISTRY_URL/$DOCKER_REGISTRY_USERNAME/simple-python-flask-app:latest" .
+      - docker push "$DOCKER_REGISTRY_URL/$DOCKER_REGISTRY_USERNAME/simple-python-flask-app:latest"
+  post_build:
+    commands:
+      - echo "Build completed successfully!"
+artifacts:
+  files:
+    - '**/*'
+  base-directory: ../simple-python-app
+```
+- Add env variables:
+  - Go to Systems Manager > Parameter Store > Create parameter.
+  - Name: `DOCKER_REGISTRY_USERNAME`
+  - Value: your-docker-registry-username
+  - Type: SecureString
+  - Create parameter.
+  - Name: `DOCKER_REGISTRY_PASSWORD`
+  - Value: your-docker-registry-password
+  - Type: SecureString
+  - Create parameter.
+  - Name: `DOCKER_REGISTRY_URL`
+  - Value: docker.io
+  - Type: SecureString
+  - Create parameter.
+
+- Build:
+  - Click on `Start build`.
+  - Wait for the build to complete.
+  - You will get the build status as "Succeeded".
+  - You will get the build output as "Build completed successfully!".
+
+## CodePipeline
+
+- Go to Console and create a pipeline.
+- Name the pipeline as "MyPipeline".
+- Select the source type as "GitHub".
+- Enter the GitHub repository URL.
+- build stage:
+  - Select the build project as "MyBuildProject".
+- Test stage:
+ - Test provider is `AWS CodeBuild`.
+ - Then add project name as "MyBuildProject".

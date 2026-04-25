@@ -1,0 +1,224 @@
+**AWS CodePipeline** is a fully managed CI/CD service from Amazon Web Services that automates the process of building, testing, and deploying applications whenever there is a change in the source code.
+
+## Stages in CodePipeline
+
+- Source
+- Build
+- Test
+- Deploy
+
+## Key Features
+- Fully automated CI/CD
+- Event-driven (trigger on code change)
+- Easy integration with AWS services
+- Supports multiple stages
+- Visual pipeline view
+
+## Advantages
+- No manual deployment
+- Faster releases
+- Consistent delivery
+- Scalable
+
+## Limitations
+- Mostly AWS-focused
+- Setup can be complex
+- Needs integration with other services
+
+When a developer pushes code to a repository, CodePipeline automatically triggers, builds the application using CodeBuild, runs tests, and deploys it to EC2 using CodeDeploy.
+
+![](/images/cicd-codepipeline.png)
+## 🔹 Step-by-Step Explanation
+
+### 1. 👤 Developer (User)
+- Developer writes code and pushes it to repository
+
+---
+
+### 2. 📦 Source Stage – AWS CodeCommit
+- Code is stored here (like GitHub)
+- When code is pushed → pipeline gets triggered
+
+---
+
+### 3. 🚀 Pipeline Orchestration – AWS CodePipeline
+- Acts as the **brain**
+- Controls entire workflow:
+  - Source  
+  - Build  
+  - Deploy  
+
+---
+
+## 🔹 🔧 Continuous Integration (CI Phase)
+
+Handled by:  
+👉 AWS CodeBuild
+
+### Steps inside CI:
+
+#### 🔹 Checkout
+- Pull latest code from repo  
+
+#### 🔹 Build & Unit Test
+- Compile code  
+- Run tests  
+
+#### 🔹 Code Scan
+- Check code quality/security  
+
+#### 🔹 Image Build
+- Create Docker image  
+
+#### 🔹 Image Scan
+- Scan for vulnerabilities  
+
+#### 🔹 Image Push
+- Push image to registry (like ECR)
+
+👉 This entire process = **Continuous Integration**
+
+---
+
+## 🔹 🚢 Continuous Delivery (CD Phase)
+
+Handled by:  
+👉 AWS CodeDeploy
+
+### What happens:
+- Takes built artifact (app / Docker image)
+- Deploys it to:
+  - Amazon EC2  
+  - Kubernetes (EKS)
+
+👉 This is **Continuous Delivery**
+
+---
+
+## 🔥 Key Understanding (Important)
+
+- **CodePipeline = Orchestrator**  
+- **CodeBuild = Build & Test**  
+- **CodeDeploy = Deployment**  
+- **CodeCommit = Source**  
+
+---
+
+## 🔹 How to explain in interview (perfect answer 💡)
+
+> “This diagram represents a CI/CD pipeline where code is pushed to CodeCommit, which triggers CodePipeline. The pipeline runs the CI phase using CodeBuild for building, testing, and scanning, and then moves to the CD phase where CodeDeploy deploys the application to EC2 or Kubernetes.”
+
+
+![CodePipeline](/images/jenkins-ci-cd.png)
+
+---
+
+## 🔹 Step-by-Step Explanation
+
+### 1. 👤 Developer (User)
+- Developer writes code and pushes to Git repository  
+
+---
+
+### 2. 📦 Source Control (Git)
+- Stores application code  
+- Triggers CI pipeline when code is pushed  
+
+---
+
+### 3. 🤖 CI Tool – Jenkins
+
+👉 Jenkins handles **Continuous Integration**
+
+#### CI Steps:
+
+- **Checkout**
+  - Pull latest code from repository  
+
+- **Build & Unit Test**
+  - Compile code  
+  - Run tests  
+
+- **Code Scan**
+  - Perform security and quality checks  
+
+- **Image Build**
+  - Create Docker image  
+
+- **Image Scan**
+  - Scan image for vulnerabilities  
+
+- **Image Push**
+  - Push image to container registry  
+
+👉 This completes the **CI phase**
+
+---
+
+## 🔹 🔄 Key Difference (GitOps Flow)
+
+👉 Instead of directly deploying to Kubernetes:
+
+### 4. 📝 Update K8s Manifests
+- Jenkins updates Kubernetes YAML files:
+  - Image version  
+  - Deployment configuration  
+
+- Changes are committed back to Git  
+
+---
+
+### 5. 🚀 CD Tool – ArgoCD
+
+👉 ArgoCD follows **GitOps approach**
+
+- Monitors Git repository continuously  
+- Detects changes in manifests  
+- Syncs with Kubernetes cluster  
+
+👉 No direct deployment from Jenkins  
+👉 Git acts as **single source of truth**
+
+---
+
+### 6. ☸️ Deployment – Kubernetes
+- ArgoCD deploys application to Kubernetes cluster  
+- Ensures desired state = actual state  
+
+---
+
+## 🔥 Key Concepts (Important)
+
+- **GitOps**
+  - Deployment controlled via Git  
+
+- **Separation of CI & CD**
+  - Jenkins → CI  
+  - ArgoCD → CD  
+
+- **Declarative Deployment**
+  - Kubernetes manifests define desired state  
+
+---
+
+## 🔹 Advantages
+
+- More secure (no direct cluster access)  
+- Version-controlled deployments  
+- Easy rollback (revert Git commit)  
+- Fully automated delivery  
+
+---
+
+## 🔹 How to explain in interview 💡
+
+> “In this pipeline, code is pushed to Git, which triggers Jenkins for CI tasks like build, testing, and Docker image creation. Jenkins then updates Kubernetes manifests stored in Git. ArgoCD monitors the repository and automatically deploys the updated configuration to Kubernetes using a GitOps approach.”
+
+---
+
+## 🔹 One-line Summary
+
+> “Jenkins handles CI, while ArgoCD manages CD using GitOps for Kubernetes deployments.”
+
+
+> “Both approaches are good, but the choice depends on requirements. AWS-native pipelines are easier to set up and best for AWS-centric environments, while Jenkins with ArgoCD provides more flexibility and follows GitOps, making it ideal for Kubernetes-based and complex deployments.”
