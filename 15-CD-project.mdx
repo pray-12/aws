@@ -1,0 +1,52 @@
+**AWS CodeDeploy** is an AWS service used to automatically deploy your application code to servers or services.
+
+
+AWS CodeDeploy is a deployment service that automates application deployments to EC2, ECS, and Lambda with support for in-place and blue-green deployment strategies
+
+## How CodeDeploy works
+1. Code is stored in a repository (like GitHub).
+2. Code is deployed to a server or service.
+
+### Create a EC2 instance
+1. Go to the AWS Management Console.
+2. Navigate to the EC2 service.
+3. Click on "Instances".
+4. Click on "Launch Instance".
+5. Do the configuration and make sure in network settings vpc is selected as "project" and subnet is selected as "public-subnet". enable public ip address.
+6. Add a tag with key as "Name" and value as "MyEC2Instance".
+7. Create instance.
+
+### Logged in to the EC2 instance
+1. ssh -i ~/Downloads/my-key-pair.pem ubuntu@ec2-instance-public-ip
+2. sudo apt update
+3. Run commands from here: https://docs.aws.amazon.com/codedeploy/latest/userguide/codedeploy-agent-operations-install-ubuntu.html to install the CodeDeploy agent. Why we are doing this? Because CodeDeploy agent is responsible for deploying the application to the EC2 instance.
+
+### IAM Role for CodeDeploy
+1. Go to the IAM service.
+2. Click on "Roles".
+3. Click on "Create role".
+4. Select the service as "CodeDeploy".
+5. Click on "Create role".
+6. Add a tag with key as "Name" and value as "CodeDeployRole" &"EC2FullAccess".
+7. Create role.
+8. Now attach the role to the EC2 instance.
+    - Action > Security > Modify IAM role>update IAM role
+9. Restart the agent by running the command: sudo service codedeploy-agent restart
+
+### Create a CodeDeploy application
+1. Go to the CodeDeploy service.
+2. Click on "Applications".
+3. Click on "Create application".
+4. Click on "Create deployment group".
+    -  Give the group name as "MyDeploymentGroup".
+    -  Service role as "CodeDeployRole".
+    -  
+
+Tags in AWS are key–value pairs used to label and organize resources.
+
+You can add tags to almost every AWS resource:
+
+- Amazon EC2
+- Amazon S3
+- AWS CodeBuild
+- Amazon ECR

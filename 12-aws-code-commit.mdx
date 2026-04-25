@@ -6,18 +6,15 @@ By the help of these 4 tools, you can automate your infrastructure deployment an
 
 ## AWS CodeCommit
 
-AWS CodeCommit is a version control service that stores your code in a secure, highly available repository.
-
+AWS CodeCommit is a fully managed Git-based version control service provided by Amazon Web Services that lets you store, manage, and track your source code securely in the cloud.
+- It is a private git repository.
 
 ### Why CodeCommit?
 
-- Before CodeCommit:
-  - You host Git on your own servers ❌
-  - Manage scaling, backups, security ❌
-- With CodeCommit:
-  - Fully managed by AWS ✅
-  - Highly available & scalable ✅
-  - Integrated with AWS ecosystem ✅
+- No need to manage Git servers
+- Secure (uses IAM)
+- Highly available
+- Works well with AWS DevOps tools
 
 ## Advantages of CodeCommit
 
@@ -30,5 +27,17 @@ AWS CodeCommit is a version control service that stores your code in a secure, h
 
 ## Disadvantages of CodeCommit
 
+CodeCommit is secure and managed, but lacks advanced collaboration features and is limited to the AWS ecosystem.
 
-## 
+## How to create a CodeCommit repository
+
+1. Create a IAM user.
+2. Create a IAM policy like CodeCommitPowerUser.
+3. Attach the policy to the user.
+4. Create a CodeCommit repository.
+5. Install the git in the local machine.
+6. Clone the repository to the local machine.
+7. Create a new file and commit it to the repository.
+8. Push the changes to the repository.
+
+In real projects, I would use GitHub for collaboration-heavy or open-source projects, GitLab when I need built-in CI/CD and full DevOps capabilities, and CodeCommit when working entirely within AWS for better security and integration
