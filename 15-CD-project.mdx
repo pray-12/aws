@@ -40,7 +40,57 @@ AWS CodeDeploy is a deployment service that automates application deployments to
 4. Click on "Create deployment group".
     -  Give the group name as "MyDeploymentGroup".
     -  Service role as "CodeDeployRole".
-    -  
+    -  Environment configuration: Amazon EC2 instances.
+       - Key : Name , Value : MyEC2Instance [1 unique match instance required]
+    - Load balancer configuration: None
+
+5. Create a appspec.yml file that contains the configuration for the application. It is a YAML file that contains the configuration for the application. It is used to define the application and the deployment group. [root repository is the repository that contains the code that you want to deploy.]
+
+6. Go to application>deployment groups>MyDeploymentGroup>Deployment configuration>Create a new deployment.
+7.  Connect to the GitHub repository and add the commit id of the code that you want to deploy.
+
+```yaml
+version: 0.0
+os: linux
+
+hooks:
+  ApplicationStop:
+    - location: scripts/stop_container.sh
+      timeout: 300
+      runas: root
+  AfterInstall:
+    - location: scripts/start_container.sh
+      timeout: 300
+      runas: root
+```
+
+scripts/stop_container.sh and scripts/start_container.sh are the scripts that you want to run before and after the deployment.
+```bash
+#!/bin/bash
+set -e # This is used to exit the script if any command fails.
+echo "Stopping the container..."
+
+container_id=`docker ps | awk -F " " '{print $1}'
+docker rm -f $container_id
+echo "Container stopped and removed..."
+```
+
+```bash
+#!/bin/bash
+set -e # This is used to exit the script if any command fails.
+
+# Pull the Docker image from Docker Hub
+echo "Pulling the Docker image from Docker Hub..."
+
+docker pull <image-name>
+docker run -d -p 5000:5000 <image-name> # This is used to run the Docker image as a container on port 5000.
+
+# Run the Docker image as a container
+echo "Running the Docker image as a container..."
+```
+Install docker.
+
+Add a stage in te codepipeline to deploy the application.
 
 Tags in AWS are key–value pairs used to label and organize resources.
 
