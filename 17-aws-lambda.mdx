@@ -1,0 +1,178 @@
+# AWS Lambda
+
+**AWS Lambda** is a serverless compute service that lets you run code without provisioning or managing servers.
+
+Compute = CPU + Memory + processing capability
+
+## 🔹 Simple Definition
+Lambda = **Run code without managing servers**
+
+## 🔹 How It Works
+1. Upload your code (Python, Node.js, Java, etc.)
+2. Configure a trigger (event)
+3. Lambda runs your code automatically when the event occurs
+
+## 🔹 Common Triggers (Events)
+- S3 → File upload
+- API Gateway → HTTP request
+- CloudWatch → Scheduled job (cron)
+- DynamoDB → Data change
+
+## 🔹 Key Features
+- Serverless (no server management)
+- Auto scaling (handles any number of requests)
+- Pay only for execution time
+- Supports multiple programming languages
+- Event driven execution - Lambda functions are triggered by events from various sources such as S3, API Gateway, CloudWatch, etc.
+
+## 🔹 Components
+
+### ⚙️ Function
+- The main code you write
+
+### ⏱️ Timeout
+- Max execution time (up to 15 minutes)
+
+### 📦 Deployment Package
+- Code + dependencies
+
+### 🔐 IAM Role
+- Permissions to access other AWS services
+
+---
+
+## 🔹 Example
+When a file is uploaded to S3:
+- Lambda triggers automatically
+- Processes the file (resize image, validate data, etc.)
+- Stores result back in S3
+
+---
+
+## 🔹 Use Cases
+- Image processing  
+- Backend APIs  
+- Automation scripts  
+- Real-time data processing  
+
+---
+
+## 🔹 Advantages
+- No server maintenance  
+- Scales automatically  
+- Cost-efficient  
+- Easy integration with AWS services  
+
+---
+
+## 🔹 Limitations
+- Max execution time: 15 minutes  
+- Cold start latency  
+- Not ideal for long-running applications  
+
+---
+
+## 🔹 Interview Answer
+**AWS Lambda** is a serverless compute service that executes code in response to events without requiring server management. It automatically scales and charges only for the compute time used.
+
+## When to Use EC2
+
+Use EC2 when you need full control over servers.
+
+### ✅ Best for:
+- Long-running applications (24/7)
+- Hosting websites or backend servers
+- Custom OS or software installation
+- Stateful applications
+- High, predictable workloads
+
+### Use EC2:
+- You build a full e-commerce website
+- Needs continuous running server
+- Database + backend + frontend
+
+## When to Use Lambda
+
+Use Lambda when you want event-driven, serverless execution.
+
+### ✅ Best for:
+- Short tasks (few seconds to minutes)
+- Event-based processing
+- Automation scripts
+- Microservices / APIs
+
+### Use Lambda:
+- When user uploads image → resize automatically
+- When order placed → send confirmation email
+- Manager tells no body should create EBS with GP2, use GP3 instead. Lambda will check if the EBS is created with GP2 and if it is, it will send an email to the manager.
+
+## Working
+1. Go to AWS Console and search for Lambda.
+2. Click on Create function.
+3. Author from scratch.
+4. Runtime: Python 3.12
+5. Advanced settings:
+    - Enable function URL [Will get the public IP address of the Lambda function to access the function from the internet]
+    - Auth type: anyone
+
+Note: When i create a Lambda function, it will  automatically create a new IAM role for the function.
+
+### 1. What is AWS Lambda?
+AWS Lambda is a serverless compute service that lets you run code without provisioning or managing servers. It automatically scales and manages the infrastructure required to run your code in response to events.
+
+### 2. How does AWS Lambda work?
+You can upload your code to Lambda and define event sources that trigger the execution of your code. Lambda automatically manages the execution environment, scales it as needed, and provides monitoring and logging.
+
+### 3. What are the key benefits of using AWS Lambda?
+The benefits of AWS Lambda include automatic scaling, reduced operational overhead, cost efficiency (as you pay only for the compute time used), and the ability to build event-driven architectures.
+
+### 4. What types of events can trigger AWS Lambda functions?
+AWS Lambda functions can be triggered by various event sources, such as changes in Amazon S3 objects, updates to Amazon DynamoDB tables, HTTP requests through Amazon API Gateway, and more.
+
+### 5. How is concurrency managed in AWS Lambda?
+Lambda automatically handles concurrency by scaling out instances of your function in response to incoming requests. You can set a concurrency limit to control how many concurrent executions are allowed.
+
+### 6. What is the maximum execution duration for a single AWS Lambda invocation?
+The maximum execution duration for a single Lambda invocation is 15 minutes.
+
+### 7. How do you pass data to and from AWS Lambda functions?
+You can pass data to Lambda functions through event objects, which contain information about the triggering event. You can also return data by using the return statement or creating a response object.
+
+### 8. Can AWS Lambda functions communicate with external resources?
+Yes, Lambda functions can communicate with external resources such as databases, APIs, and other AWS services by using appropriate SDKs and APIs provided by AWS.
+
+### 9. What are AWS Lambda layers?
+AWS Lambda layers are a way to manage and share code that is common across multiple functions. Layers can include libraries, custom runtimes, and other function dependencies.
+
+### 10. How can you handle errors in AWS Lambda functions?
+You can handle errors by using try-catch blocks in your code. Lambda also provides CloudWatch Logs for monitoring, and you can set up error handling and retries for asynchronous invocations.
+
+### 11. Can AWS Lambda functions access the internet?
+Yes, Lambda functions can access the internet through the Virtual Private Cloud (VPC) or through public endpoints if your function is not configured within a VPC.
+
+### 12. What are the execution environments available for AWS Lambda functions?
+Lambda supports several runtimes, including Node.js, Python, Java, Go, Ruby, .NET Core, and custom runtimes using the Runtime API.
+
+### 13. How can you configure environment variables for AWS Lambda functions?
+You can set environment variables for Lambda functions when creating or updating the function. These variables can be accessed within your code.
+
+### 14. What is the difference between synchronous and asynchronous invocation of Lambda functions?
+Synchronous invocations wait for the function to complete and return a response, while asynchronous invocations return immediately, and the response is sent to a specified destination.
+
+### 15. What is the AWS Lambda Event Source Mapping?
+Event Source Mapping allows you to connect event sources like Amazon DynamoDB streams or Amazon Kinesis streams to Lambda functions. This enables the function to process events as they occur.
+
+### 16. How can you manage the permissions and execution roles for AWS Lambda functions?
+You can use AWS Identity and Access Management (IAM) roles to grant permissions to your Lambda functions. Execution roles define what AWS resources the function can access.
+
+### 17. What is AWS Step Functions?
+AWS Step Functions is a serverless orchestration service that lets you coordinate multiple AWS services into serverless workflows using visual workflows called state machines.
+
+### 18. How can you automate the deployment of AWS Lambda functions?
+You can use AWS Serverless Application Model (SAM) templates, AWS CloudFormation, or CI/CD tools like AWS CodePipeline to automate the deployment of Lambda functions.
+
+### 19. Can AWS Lambda functions connect to on-premises resources?
+Yes, Lambda functions can connect to on-premises resources by placing the function inside a VPC and using a VPN or Direct Connect connection to establish connectivity.
+
+### 20. What is the Cold Start issue in AWS Lambda?
+The Cold Start issue occurs when a Lambda function is invoked for the first time or after it has been idle for a while. The function needs to be initialized, causing a slight delay in response time.
