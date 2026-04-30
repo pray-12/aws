@@ -1,5 +1,7 @@
 **AWS ECR (Elastic Container Registry)** is a fully managed Docker container registry service provided by AWS to store, manage, and deploy container images.
 
+**Elastic** -> Highly scalable, flexible, available and cost-effective.
+
 ## 🔹 Simple Definition
 ECR = **Private Docker image storage in AWS**
 
@@ -43,23 +45,34 @@ Enter your AWS Access Key ID, Secret Access Key, default region, and preferred o
 ## 4. Pushing Docker Images to ECR
 Now that you have your ECR repository set up and the AWS CLI configured, let's push a Docker image to ECR.
 
-1. Build your Docker image locally using the `docker build` command:
+Create a Dockerfile for the image.
+```dockerfile
+FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+COPY . .
+CMD ["python", "app.py"]
+```
+
+1. Log in to your ECR registry using the AWS CLI:
+
+```bash
+aws ecr get-login-password --region <your-region> | docker login --username AWS --password-stdin <your-aws-account-id>.dkr.ecr.<your-region>.amazonaws.com
+```
+
+2. Build your Docker image locally using the `docker build` command:
 
 ```bash
 docker build -t <your-image-name> <path-to-dockerfile>
 ```
 
-2. Tag the image with your ECR repository URI:
+3. Tag the image with your ECR repository URI: why? because we need to push the image to the ECR repository.
 
 ```bash
 docker tag <your-image-name>:<tag> <your-aws-account-id>.dkr.ecr.<your-region>.amazonaws.com/<your-repository-name>:<tag>
 ```
 
-3. Log in to your ECR registry using the AWS CLI:
-
-```bash
-aws ecr get-login-password --region <your-region> | docker login --username AWS --password-stdin <your-aws-account-id>.dkr.ecr.<your-region>.amazonaws.com
-```
 
 4. Push the Docker image to ECR:
 
@@ -73,7 +86,7 @@ To pull and use the Docker images from ECR on another system or AWS service, fol
 1. Log in to ECR using the AWS CLI as shown in Step 3 of the previous section.
 2. Pull the Docker image from ECR:
 
-```
+```bash
 docker pull <your-aws-account-id>.dkr.ecr.<your-region>.amazonaws.com/<your-repository-name>:<tag>
 ```
 
@@ -88,11 +101,13 @@ As good practice, remember to clean up resources that you no longer need to avoi
 - Deploying apps on AWS (ECS, EKS)
 - Need secure private image storage
 - Want tight IAM control
+- Private repository for images
 
 ### When to Use Docker Hub
 - Sharing public images
 - Open-source projects
 - Quick testing without AWS
+- Public repository for images 
 
 ### 1. What is Amazon Elastic Container Registry (ECR)?
 Amazon Elastic Container Registry (ECR) is a fully managed Docker container registry that makes it easy to store, manage, and deploy Docker container images.

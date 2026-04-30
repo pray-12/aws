@@ -1,0 +1,285 @@
+# 🚀 Amazon EKS (Elastic Kubernetes Service)
+
+## 📌 What is EKS?
+
+Amazon EKS is a **managed Kubernetes service** provided by AWS.  
+It allows you to run Kubernetes without managing the control plane.
+
+## 🧠 Why Use EKS?
+
+- No need to manage Kubernetes control plane
+- Highly available (multi-AZ)
+- Deep integration with AWS services
+- Scalable and secure
+- Industry-standard orchestration
+
+## 🏗️ EKS Architecture
+
+### 1. Control Plane (Managed by AWS)
+- API Server
+- Scheduler
+- Controller Manager
+- etcd (database)
+
+👉 AWS handles:
+- Updates
+- Scaling
+- High availability
+
+---
+
+### 2. Worker Nodes (Managed by You)
+
+- EC2 instances OR Fargate
+- Run your applications (Pods)
+
+---
+
+### 3. Pods
+
+- Smallest deployable unit in Kubernetes
+- Can contain one or more containers
+
+---
+
+### 4. Node Groups
+
+- Group of worker nodes
+- Can be managed or self-managed
+
+---
+
+## ⚙️ How EKS Works
+
+1. Create EKS Cluster  
+2. Configure kubectl  
+3. Add worker nodes (Node Groups)  
+4. Deploy application (Pods)  
+5. Expose using Services (Load Balancer)  
+
+
+## 🎯 Key Features
+
+- Managed Kubernetes control plane  
+- Auto scaling (Cluster Autoscaler)  
+- Load balancing integration  
+- Supports EC2 & Fargate  
+- High availability  
+
+Fargate:
+
+ - Serverless compute engine for containers.
+ - No need to manage the underlying infrastructure.
+ - Automatically scales based on demand.
+ - Pay for what you use.
+
+## ⚖️ EKS vs ECS
+
+| Feature | EKS | ECS |
+|--------|-----|-----|
+| Base | Kubernetes | AWS native |
+| Flexibility | High | Moderate |
+| Learning Curve | High | Low |
+| Portability | Multi-cloud | AWS only |
+
+## Understanding Kubernetes Fundamentals
+
+### 1.1 EKS vs. Self-Managed Kubernetes: Pros and Cons
+
+1.1.1 EKS (Amazon Elastic Kubernetes Service)
+Pros:
+
+```text
+    Managed Control Plane: EKS takes care of managing the Kubernetes control plane components, such as the API server, controller manager, and etcd. AWS handles upgrades, patches, and ensures high availability of the control plane.
+
+    Automated Updates: EKS automatically updates the Kubernetes version, eliminating the need for manual intervention and ensuring that the cluster stays up-to-date with the latest features and security patches.
+
+    Scalability: EKS can automatically scale the Kubernetes control plane based on demand, ensuring the cluster remains responsive as the workload increases.
+
+    AWS Integration: EKS seamlessly integrates with various AWS services, such as AWS IAM for authentication and authorization, Amazon VPC for networking, and AWS Load Balancers for service exposure.
+
+    Security and Compliance: EKS is designed to meet various security standards and compliance requirements, providing a secure and compliant environment for running containerized workloads.
+
+    Monitoring and Logging: EKS integrates with AWS CloudWatch for monitoring cluster health and performance metrics, making it easier to track and troubleshoot issues.
+
+    Ecosystem and Community: Being a managed service, EKS benefits from continuous improvement, support, and contributions from the broader Kubernetes community.
+```
+
+Cons:
+```text
+    Cost: EKS is a managed service, and this convenience comes at a cost. Running an EKS cluster may be more expensive compared to self-managed Kubernetes, especially for large-scale deployments.
+
+    Less Control: While EKS provides a great deal of automation, it also means that you have less control over the underlying infrastructure and some Kubernetes configurations.
+```
+
+1.1.2 Self-Managed Kubernetes on EC2 Instances
+Pros:
+
+    Cost-Effective: Self-managed Kubernetes allows you to take advantage of EC2 spot instances and reserved instances, potentially reducing the overall cost of running Kubernetes clusters.
+
+    Flexibility: With self-managed Kubernetes, you have full control over the cluster's configuration and infrastructure, enabling customization and optimization for specific use cases.
+
+    EKS-Compatible: Self-managed Kubernetes on AWS can still leverage various AWS services and features, enabling integration with existing AWS resources.
+
+    Experimental Features: Self-managed Kubernetes allows you to experiment with the latest Kubernetes features and versions before they are officially supported by EKS.
+
+Cons:
+
+    Complexity: Setting up and managing a self-managed Kubernetes cluster can be complex and time-consuming, especially for those new to Kubernetes or AWS.
+
+    Maintenance Overhead: Self-managed clusters require manual management of Kubernetes control plane updates, patches, and high availability.
+
+    Scaling Challenges: Scaling the control plane of a self-managed cluster can be challenging, and it requires careful planning to ensure high availability during scaling events.
+
+    Security and Compliance: Self-managed clusters may require additional effort to implement best practices for security and compliance compared to EKS, which comes with some built-in security features.
+
+    Lack of Automation: Self-managed Kubernetes requires more manual intervention and scripting for certain operations, which can increase the risk of human error.
+
+## Prerequisites
+
+kubectl – A command line tool for working with Kubernetes clusters. For more information, see [Installing or updating kubectl]("https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html").
+
+eksctl – A command line tool for working with EKS clusters that automates many individual tasks. For more information, see [Installing or updating]("https://docs.aws.amazon.com/eks/latest/userguide/eksctl.html").
+
+AWS CLI – A command line tool for working with AWS services, including Amazon EKS. For more information, see [Installing, updating, and uninstalling the AWS CLI]("https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html") in the AWS Command Line Interface User Guide. After installing the AWS CLI, we recommend that you also configure it. For more information, see [Quick configuration]("https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html#cli-configure-quickstart-config") with aws configure in the AWS Command Line Interface User Guide.
+
+## Step 1: Install EKS using eksctl
+
+Please follow the prerequisites doc before this.
+
+1. Create a cluster using Fargate
+
+```bash
+eksctl create cluster --name demo-cluster --region us-east-1 --fargate
+```
+- Check the Fargate profiles under the Resource Groups.
+- It will show `default` or `kube-system` Namespace. We can deploy our application in this namespace.
+
+
+2. Update the kubeconfig to connect to the cluster, because we are using Fargate, we need to update the kubeconfig to connect to the cluster.
+```bash
+aws eks update-kubeconfig --name demo-cluster --region us-east-1
+```
+3. Create Fargate profile which will be used to deploy the application.
+
+- We can check the available namespaces using the command: `kubectl get namespaces`
+
+```bash
+eksctl create fargateprofile \
+    --cluster demo-cluster \
+    --region us-east-1 \
+    --name alb-sample-app \
+    --namespace game-2048
+```
+
+4. Deploy the deployment, service and Ingress
+
+```bash
+kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.5.4/docs/examples/2048/2048_full.yaml
+```
+
+![Screenshot 2023-08-03 at 7 57 15 PM](https://github.com/iam-veeramalla/aws-devops-zero-to-hero/assets/43399466/93b06a9f-67f9-404f-b0ad-18e3095b7353)
+
+## Step 2: Create the ingress controller
+
+### Commands to configure IAM OIDC provider 
+We need to configure the IAM OIDC provider to allow the ingress controller to access the AWS services.AlB controller needs to access the AWS services to create the load balancer.
+
+```bash
+export cluster_name=demo-cluster
+```
+
+```bash
+oidc_id=$(aws eks describe-cluster --name $cluster_name --query "cluster.identity.oidc.issuer" --output text | cut -d '/' -f 5) 
+```
+
+### Check if there is an IAM OIDC provider configured already
+
+- aws iam list-open-id-connect-providers | grep $oidc_id | cut -d "/" -f4\n 
+
+If not, run the below command
+
+```bash
+eksctl utils associate-iam-oidc-provider --cluster $cluster_name --approve
+```
+
+### How to setup alb add on
+
+Download IAM policy which will be used to create the IAM role for the ingress controller.
+
+```bash
+curl -O https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.11.0/docs/install/iam_policy.json
+```
+
+Create IAM Policy required for ALB creation.
+
+```bash
+aws iam create-policy \
+    --policy-name AWSLoadBalancerControllerIAMPolicy \
+    --policy-document file://iam_policy.json
+```
+
+Create IAM Role
+
+```bash
+eksctl create iamserviceaccount \
+  --cluster=<your-cluster-name> \
+  --namespace=kube-system \
+  --name=aws-load-balancer-controller \
+  --role-name AmazonEKSLoadBalancerControllerRole \
+  --attach-policy-arn=arn:aws:iam::<your-aws-account-id>:policy/AWSLoadBalancerControllerIAMPolicy \
+  --approve
+```
+
+## Deploy ALB controller
+
+Add helm repo which will be used to install the ALB controller.
+
+```bash
+helm repo add eks https://aws.github.io/eks-charts
+```
+
+Update the repo
+
+```bash
+helm repo update eks
+```
+
+Install helm chart for ALB controller.
+
+```bash
+helm install aws-load-balancer-controller eks/aws-load-balancer-controller -n kube-system \
+  --set clusterName=<your-cluster-name> \
+  --set serviceAccount.create=false \
+  --set serviceAccount.name=aws-load-balancer-controller \
+  --set region=<your-region> \
+  --set vpcId=<your-vpc-id>
+```
+vpcId: VPC ID of the cluster. Go to EKS cluster console and click on the cluster name and then click on the "Networking" tab and then click on the "VPC" tab and then copy the VPC ID.
+
+Verify that the deployments are running. We should have 2 replicas of the ALB controller. 1 in each Availability Zone.
+
+```bash
+kubectl get deployment -n kube-system aws-load-balancer-controller
+```
+
+you can check in instance> load balancer > ALB controller and see the status of the ALB controller.
+
+We need to wait till LB status is `active`.
+
+Watch the pods are running.
+```bash
+kubectl get pods -n kube-system -w
+```
+
+To check the logs of the ALB controller.
+```bash
+kubectl edit deploy/aws-load-balancer-controller -n kube-system
+```
+
+Get the ingress public ip address.
+
+```bash
+kubectl get ingress -n game-2048
+```
+
