@@ -65,7 +65,7 @@ To improve resiliency, we deploy the servers in two Availability Zones, by using
 9. When we click on EC2 we will see two instances in the private subnets.
 ![](images/asg-8.png)
 10. These instance will not have a public ip address because they are in the private subnets.
-11. We will create a bastion-host in the public subnet to connect to the instances.
+11. We will create a bastion-host[A bastion host (also called a jump server) is a secure entry point used to access instances that are inside a private subnet.] in the public subnet to connect to the instances.
     - Go to the AWS Management Console.
     - Navigate to the EC2 service.
     - Click on "Instances".
