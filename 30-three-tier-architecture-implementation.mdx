@@ -1,0 +1,134 @@
+# 🏗️ 3-Tier Architecture Implementation in AWS
+
+## 📌 Overview
+A 3-tier architecture divides an application into three layers:
+- **Presentation Layer (Web Tier)**
+- **Application Layer (App Tier)**
+- **Data Layer (DB Tier)**
+
+This improves **scalability, security, and maintainability**.
+
+---
+
+## 🧱 Architecture Layers
+
+### 1. 🌐 Web Tier (Presentation Layer)
+- Handles user requests (HTTP/HTTPS)
+- Hosts frontend (React, Angular, HTML)
+
+**AWS Services:**
+- Amazon EC2
+- Elastic Load Balancer (ELB)
+- Amazon CloudFront (optional)
+
+---
+
+### 2. ⚙️ App Tier (Application Layer)
+- Contains business logic
+- Communicates with DB layer
+
+**AWS Services:**
+- Amazon EC2 / ECS / Lambda
+
+---
+
+### 3. 🗄️ DB Tier (Data Layer)
+- Stores structured/unstructured data
+
+**AWS Services:**
+- Amazon RDS (MySQL, PostgreSQL, etc.)
+- Amazon DynamoDB (NoSQL)
+
+---
+
+## 🌐 Network Setup (VPC Design)
+
+- Create a **VPC (10.0.0.0/16)**
+- Subnets:
+  - 2 Public Subnets → Web Tier
+  - 2 Private Subnets → App Tier
+  - 2 Private Subnets → DB Tier
+
+**Components:**
+- Internet Gateway (for public access)
+- NAT Gateway (for private subnet outbound access)
+
+---
+
+## ⚙️ Implementation Steps
+
+### Step 1: Create VPC & Subnets
+- VPC with CIDR block
+- Public & Private subnets across multiple AZs
+
+---
+
+### Step 2: Web Tier Setup
+- Launch EC2 instances in public subnet
+- Install web server (Nginx/Apache)
+- Attach Security Group:
+  - Allow HTTP (80), HTTPS (443)
+- Attach to Load Balancer
+
+---
+
+### Step 3: App Tier Setup
+- Launch EC2/ECS in private subnet
+- No direct internet access
+- Security Group:
+  - Allow traffic only from Web Tier
+
+---
+
+### Step 4: Database Tier Setup
+- Launch Amazon RDS in private subnet
+- Enable Multi-AZ for HA
+- Security Group:
+  - Allow access only from App Tier
+
+---
+
+### Step 5: Security
+- Use Security Groups (instance level)
+- Use NACLs (subnet level)
+- Store secrets in AWS Secrets Manager
+
+---
+
+### Step 6: Scaling & Availability
+- Auto Scaling Group for EC2
+- Load Balancer across multiple AZs
+
+---
+
+## 🔄 Request Flow
+
+User → Load Balancer → Web Tier → App Tier → DB Tier
+
+---
+
+## 🧠 Interview Answer
+
+> In AWS 3-tier architecture, the web layer is deployed in public subnets behind a load balancer, the application layer runs in private subnets handling business logic, and the database layer is isolated in private subnets using RDS. Security groups control access between layers, ensuring security and high availability.
+
+---
+
+## 🚀 Best Practices
+
+- Use private subnets for App & DB
+- Enable Multi-AZ for RDS
+- Use IAM Roles (avoid hardcoding credentials)
+- Enable CloudWatch logging
+- Use CloudFront for CDN
+
+---
+
+| Feature             | 2-Tier Architecture              | 3-Tier Architecture          |
+| ------------------- | -------------------------------- | ---------------------------- |
+| **Layers**          | Client + Database                | Web + App + Database         |
+| **Business Logic**  | Present in client (frontend)     | Present in application layer |
+| **Scalability**     | ❌ Limited                        | ✅ Highly scalable            |
+| **Security**        | ❌ Less secure (direct DB access) | ✅ More secure (DB isolated)  |
+| **Maintainability** | ❌ Hard to manage                 | ✅ Easy to manage             |
+| **Performance**     | ⚠️ Can degrade with load         | ✅ Better with load balancing |
+| **Use Case**        | Small apps                       | Enterprise / production apps |
