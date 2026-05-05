@@ -74,5 +74,34 @@ To improve resiliency, we deploy the servers in two Availability Zones, by using
     - Auto-assign public ip: "enable"
     - Create instance.
     - Once the instance is created, we will see the instance in the public subnet.
-    ![](images/asg-9.png)
-/mnt/c/Windows/explorer.exe .
+
+12. Connect the bastion host to the instances in private subnets.
+```bash
+/mnt/c/Windows/explorer.exe . # to open the file explorer.
+udo scp -i /home/preethy/aws-instance/key-pair.pem /home/preethy/aws-instance/key-pair.pem ubuntu@18.60.157.139
+:/home/ubuntu
+ssh -i "my-key-pair.pem" ubuntu@bastion-host-public-ip
+```
+13. Create a simple index.html file in the home directory.
+```bash
+echo "<h1>Hello World</h1>" > index.html
+```
+14. Start a simple http server.
+```bash
+python3 -m http.server 8000
+```
+15. Now connect to one of the private instances and check the index.html file.
+```bash
+ssh -i "my-key-pair.pem" ubuntu@private-instance-public-ip
+cat index.html
+```
+15. Now create a Load Balancer.
+ 1. Befor that need to create `target group` for the load balancer.
+ ![](/images/image-9.png)
+ 2. Register targets 
+ ![](/images/image-10.png)
+ 3. Create a Load Balancer.
+ ![](/images/image-11.png)
+ 4. Select the target group and create a Load Balancer.
+ ![](/images/image-12.png)
+
