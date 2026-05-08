@@ -21,7 +21,7 @@
 
 ## 4. You have launched EC2 instances in your VPC, and you want them to communicate with each other using private IP addresses. What steps would you take to enable this communication?
 
-Instances within the same Amazon VPC can communicate using private IP addresses by default because the VPC route table contains a local route that allows internal traffic. To enable communication, I would ensure that both instances are in the same VPC and verify that their Security Groups allow the required inbound and outbound traffic. No Internet Gateway or VPC Peering is required for communication within the same VPC.
+Instances within the same Amazon VPC can communicate using private IP addresses by default because the **VPC route table contains a local route that allows internal traffic**. To enable communication, I would ensure that both instances are in the same VPC and verify that their Security Groups allow the required inbound and outbound traffic. No Internet Gateway or VPC Peering is required for communication within the same VPC.
 
 ## 5. You want to implement strict network access control for your VPC resources. How would you achieve this?
 
@@ -39,7 +39,7 @@ Public   = IGW
 
 ## 7. Your application needs to access AWS services, such as S3 securely within your VPC. How would you achieve this?
 
-“To securely access AWS services like Amazon S3 from within a Amazon VPC, I would use VPC Endpoints. This allows instances to communicate with AWS services privately without using an Internet Gateway or NAT Gateway. For services like S3 and DynamoDB, I would use a Gateway Endpoint and associate it with the route table. For other AWS services, I would use Interface Endpoints, which create Elastic Network Interfaces within the subnet. This ensures secure, private, and efficient communication.”
+“To securely access AWS services like Amazon S3 from within a Amazon VPC, I would use **VPC Endpoints**. This allows instances to communicate with AWS services privately without using an Internet Gateway or NAT Gateway. For services like S3 and DynamoDB, I would use a Gateway Endpoint and associate it with the route table. For other AWS services, I would use Interface Endpoints, which create Elastic Network Interfaces within the subnet. This ensures secure, private, and efficient communication.”
 
 ## 8. What is the difference between NACL and Security groups ? Explain with a use case ?
 
