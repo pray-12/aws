@@ -110,7 +110,7 @@ This CloudFormation template creates an S3 bucket by defining it in the Resource
   - Modified
   - Deleted
 
-“It’s like a preview before execution”
+“It’s like a preview before execution[under Events]”
 
 ## Drift Detection [Very Important]
 
@@ -147,7 +147,11 @@ AWS CloudFormation interprets templates and deploys the specified resources in t
 A CloudFormation stack is a collection of AWS resources created and managed as a single unit, based on a CloudFormation template.
 
 ### 6. What is the difference between AWS CloudFormation and AWS Elastic Beanstalk?
-AWS CloudFormation provides infrastructure as code and lets you define and manage resources at a lower level, while AWS Elastic Beanstalk is a platform-as-a-service (PaaS) that abstracts the deployment of applications.
+AWS CloudFormation is an Infrastructure as Code service used to provision and manage AWS resources using templates. It provides full control over infrastructure such as EC2, VPC, IAM, Load Balancers, and databases.
+
+AWS Elastic Beanstalk is a Platform as a Service that simplifies application deployment. Developers upload application code, and AWS automatically manages infrastructure, scaling, load balancing, and monitoring.
+
+CloudFormation is preferred when full infrastructure customization and automation are required, while Elastic Beanstalk is ideal for quickly deploying applications without managing infrastructure manually.
 
 ### 7. What is the purpose of a CloudFormation change set?
 A CloudFormation change set allows you to preview the changes that will be made to a stack before applying those changes, helping to ensure that updates won't cause unintended consequences.
