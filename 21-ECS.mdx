@@ -6,22 +6,29 @@ Amazon ECS (Elastic Container Service) is a **fully managed container orchestrat
 It helps you **run, manage, and scale Docker containers** without managing servers.
 
 ## 🔹 How ECS Works (Flow)
-- Push Docker image → Amazon ECR
-- Create Task Definition
-- Run Task or Service
-- ECS pulls image & runs container
-- Scales automatically
+
+```
+Developer writes app
+        ↓
+Create Docker image
+        ↓
+Push image to ECR
+        ↓
+ECS pulls image from ECR
+        ↓
+ECS runs the container
+``` 
 
 ## 2. Why Choose ECS Over Other Container Orchestration Tools?
 
-I would choose Amazon EC2 when I need full control over the server, including the operating system, configurations, and installed software. It’s best suited for custom or legacy applications, long-running workloads, and scenarios where I need flexibility in scaling and performance tuning. While managed services reduce operational effort, EC2 is the right choice when control and customization are more important.
-
-EC2 is best when I need full control over infrastructure and customization.
+ECS is preferred because it is simpler, fully managed, and tightly integrated with AWS services.
+It reduces operational complexity compared to Kubernetes and supports serverless container deployment using Fargate.
+ECS is ideal for AWS-centric applications that need easy scaling, high availability, and faster deployments.
 
 ## What Kuberentes supports over ECS?
 
-“Kubernetes is more flexible and supports multi-cloud, extensibility, and advanced deployment strategies, while ECS is simpler but AWS-specific.
-
+Kubernetes provides advanced orchestration capabilities compared to ECS, including multi-cloud support, portability, Helm charts, Operators, CRDs, advanced networking, and a larger open-source ecosystem.
+ECS is simpler and AWS-focused, while Kubernetes offers greater flexibility and extensibility for enterprise-scale environments.
 
 ## 3. ECS Fundamentals
 
