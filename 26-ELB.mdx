@@ -1,0 +1,194 @@
+# Elastic Load Balancing (ELB)
+
+Elastic Load Balancing is a service that automatically distributes incoming traffic to multiple resources, such as Amazon EC2 instances, containers, and IP addresses, in a single or multiple Availability Zones (AZs). It helps to ensure that your application remains available and responsive even if some of the resources become unavailable.
+
+# Types of Load Balancers in AWS
+
+AWS provides load balancing through **Elastic Load Balancing (ELB)**.
+
+There are mainly 3 types of Load Balancers:
+
+1. Application Load Balancer (ALB)
+2. Network Load Balancer (NLB)
+3. Gateway Load Balancer (GWLB)
+
+
+# 1. Application Load Balancer (ALB)
+
+## What is ALB?
+
+Application Load Balancer works at:
+
+- OSI Layer 7 (Application Layer)
+
+It understands:
+- HTTP
+- HTTPS
+- URLs
+- Hostnames
+- Headers
+
+ALB makes routing decisions based on application data.
+
+## Example
+
+```text
+example.com/api     → API Servers
+example.com/web     → Frontend Servers
+example.com/admin   → Admin Servers
+```
+
+ALB can route traffic based on URL paths.
+
+---
+
+## When to Use ALB?
+
+Use ALB when:
+- Hosting websites
+- Running REST APIs
+- Using microservices
+- Using ECS/EKS containers
+- Need intelligent routing
+
+---
+
+We use ALB for web applications and microservices because it supports Layer 7 intelligent routing such as path-based and host-based routing.
+
+# 2. Network Load Balancer (NLB)
+
+## What is NLB?
+
+Network Load Balancer works at:
+
+- OSI Layer 4 (Transport Layer)
+
+It handles:
+- TCP
+- UDP
+- TLS
+
+NLB is designed for:
+- High performance
+- Low latency
+- Millions of requests
+
+---
+
+## Example
+
+Applications like:
+- Gaming servers
+- Banking systems
+- Real-time chat applications
+
+require:
+- Fast response
+- Stable TCP connections
+
+NLB is best suited.
+
+---
+## Features
+
+- Very high performance
+- Ultra-low latency
+- Static IP support
+- Preserves client IP
+- Handles sudden traffic spikes
+
+---
+
+## When to Use NLB?
+
+Use NLB when:
+- TCP/UDP traffic is used
+- High performance is required
+- Low latency is critical
+- Real-time applications are running
+
+---
+
+## Interview Answer
+
+> NLB is used for high-performance TCP/UDP applications where ultra-low latency and static IP support are important.
+
+# 3. Gateway Load Balancer (GWLB)
+
+## What is GWLB?
+
+Gateway Load Balancer works at:
+
+- OSI Layer 3 (Network Layer)
+
+It is mainly used for:
+- Firewalls
+- VPN kind of applications
+- Intrusion Detection Systems (IDS)
+- Deep Packet Inspection
+- Security appliances
+
+## Features
+
+- Centralized security
+- Scalable firewall deployment
+- Traffic inspection
+- Works with third-party security appliances
+
+---
+
+## When to Use GWLB?
+
+Use GWLB when:
+- Security inspection is required
+- Firewall appliances need auto scaling
+- Deep packet inspection is needed
+
+---
+
+## Interview Answer
+
+> GWLB is mainly used for deploying and scaling security appliances such as firewalls in AWS.
+
+## Q1. Difference between ALB and NLB?
+
+| ALB | NLB |
+|---|---|
+| Layer 7 | Layer 4 |
+| HTTP/HTTPS | TCP/UDP |
+| Smart Routing | Fast Routing |
+| Path-based Routing | No Path Routing |
+| Slightly Slower | Extremely Fast |
+
+---
+
+## Q2. Which Load Balancer supports path-based routing?
+
+### Answer
+
+ALB supports path-based routing.
+
+---
+
+## Q3. Which Load Balancer supports static IP?
+
+### Answer
+
+NLB supports static IP addresses.
+
+---
+
+## Q4. Which Load Balancer is best for ECS?
+
+### Answer
+
+ALB is commonly used with ECS because microservices require intelligent routing.
+
+---
+
+## Q5. Which Load Balancer preserves source IP?
+
+### Answer
+
+NLB preserves the client source IP naturally.
+

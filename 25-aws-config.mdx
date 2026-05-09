@@ -1,1 +1,378 @@
-**AWS Config** is a service that helps you **track, record, and evaluate configurations** of AWS resources over time.
+AWS Config is a monitoring and compliance[Following required rules, standards, laws, or security policies.] service that records AWS resource configurations, tracks configuration changes, and evaluates resources against compliance rules.
+
+## Why AWS Config Is Used
+
+AWS Config helps answer questions like:
+
+- Who changed the security group?
+- When was the EC2 instance modified?
+- Is S3 bucket encryption enabled?
+- Are resources compliant with company policies?
+- What was the previous configuration?
+
+## How AWS Config Works
+
+```bash
+AWS Resource Created/Modified
+            ↓
+AWS Config Records Configuration
+            ↓
+Stores Configuration History
+            ↓
+Evaluates Config Rules
+            ↓
+Marks Resource as:
+COMPLIANT or NON_COMPLIANT
+```
+
+## Example
+
+Suppose a developer changes:
+
+Security Group port from 22 → 0.0.0.0/0
+
+AWS Config:
+
+- detects the change,
+- records old & new configuration,
+- evaluates compliance rule,
+- marks it NON_COMPLIANT,
+- optionally sends notification.
+
+## Interview Questions
+### What is AWS Config?
+
+AWS Config is a monitoring and compliance[Following required rules, standards, laws, or security policies.] service that records AWS resource configurations, tracks configuration changes, and evaluates resources against compliance rules.
+
+### Difference Between CloudTrail and AWS Config?
+
+CloudTrail tracks API calls and user activity, while AWS Config tracks resource configurations and compliance status.
+
+```bash
+CloudTrail = CCTV camera (who did what)
+
+AWS Config = Resource history tracker (what changed)
+```
+
+### What Are Config Rules?
+
+Config Rules are compliance checks that evaluate whether AWS resources follow defined policies or best practices.
+# AWS Config DevOps Interview Questions
+
+## 1. What is AWS Config?
+
+**Answer:**  
+AWS Config is a monitoring and compliance service that records AWS resource configurations, tracks configuration changes, and evaluates resources against compliance rules.
+
+---
+
+## 2. Why is AWS Config used?
+
+**Answer:**  
+AWS Config is used for:
+- compliance auditing,
+- configuration tracking,
+- security monitoring,
+- governance,
+- and troubleshooting infrastructure changes.
+
+---
+
+## 3. What does AWS Config record?
+
+**Answer:**  
+AWS Config records:
+- resource configurations,
+- configuration changes,
+- relationships between resources,
+- and compliance states.
+
+---
+
+## 4. What are Config Rules?
+
+**Answer:**  
+Config Rules are compliance checks that evaluate whether AWS resources follow specific policies or best practices.
+
+Examples:
+- S3 bucket should not be public
+- EBS volumes must be encrypted
+- MFA should be enabled
+
+---
+
+## 5. What are AWS Managed Rules?
+
+**Answer:**  
+AWS Managed Rules are predefined compliance rules provided by AWS.
+
+Examples:
+- required-tags
+- encrypted-volumes
+- root-account-mfa-enabled
+
+## 6. What are Custom Config Rules?
+
+**Answer:**  
+Custom Config Rules are user-defined compliance checks created using AWS Lambda functions.
+
+## 7. Difference between AWS Config and CloudTrail?
+
+| AWS Config | CloudTrail |
+|---|---|
+| Tracks resource configuration | Tracks API activity |
+| Shows resource state | Shows who performed action |
+| Compliance monitoring | API auditing |
+| Configuration history | Event history |
+
+
+## 8. How does AWS Config help DevOps teams?
+
+**Answer:**  
+AWS Config helps DevOps teams by:
+- tracking infrastructure changes,
+- identifying misconfigurations,
+- ensuring compliance,
+- improving auditing,
+- and automating governance.
+
+## 9. What is a Configuration Recorder?
+
+A Configuration Recorder records configuration details of AWS resources.
+
+## 10. What is a Configuration Snapshot?
+ 
+A Configuration Snapshot is a point-in-time collection of all resource configurations in an AWS account.
+
+## 11. What is AWS Config Aggregator?
+
+AWS Config Aggregator collects configuration and compliance data from:
+- multiple AWS accounts,
+- and multiple AWS regions.
+
+## 12. How do you monitor compliance using AWS Config?
+
+**Answer:**  
+Using:
+- Config Rules,
+- compliance dashboards,
+- SNS notifications,
+- and CloudWatch alarms.
+
+
+## 13. Can AWS Config send alerts?
+
+**Answer:**  
+Yes, AWS Config can send notifications using:
+- SNS,
+- EventBridge,
+- or Lambda integrations.
+
+## 14. How is AWS Config useful for security?
+
+**Answer:**  
+AWS Config helps detect:
+- public S3 buckets,
+- open security groups,
+- unencrypted resources,
+- and policy violations.
+
+## 15. What AWS services integrate with AWS Config?
+
+**Answer:**
+- CloudTrail
+- SNS
+- Lambda
+- EventBridge
+- Security Hub
+- Systems Manager
+
+
+# Scenario-Based Questions
+
+## 16. A security group was modified accidentally. How would AWS Config help?
+
+**Answer:**  
+AWS Config would:
+- record the configuration change,
+- show old and new values,
+- provide a timeline,
+- and help identify compliance violations.
+
+---
+
+## 17. How would you enforce tagging policies in AWS?
+
+**Answer:**  
+Using AWS Config Rules like:
+- required-tags
+- custom compliance rules.
+
+---
+
+## 18. How do you automate compliance remediation?
+
+**Answer:**  
+Using:
+- AWS Config Rules,
+- Lambda functions,
+- Systems Manager Automation,
+- and EventBridge triggers.
+
+---
+
+## 19. How does AWS Config support auditing?
+
+**Answer:**  
+AWS Config maintains configuration history and timelines useful for:
+- audits,
+- troubleshooting,
+- and compliance reporting.
+
+---
+
+## 20. What is configuration drift?
+
+**Answer:**  
+Configuration drift occurs when infrastructure changes from its expected or approved configuration state.
+
+AWS Config helps detect this drift.
+
+---
+
+# DevOps Automation Questions
+
+## 21. How can AWS Config be integrated into CI/CD pipelines?
+
+**Answer:**  
+AWS Config can validate infrastructure compliance after deployments and trigger alerts or remediation workflows if violations occur.
+
+---
+
+## 22. How would you use AWS Config with Terraform?
+
+**Answer:**  
+Terraform provisions resources while AWS Config continuously monitors them for compliance and configuration drift.
+
+---
+
+## 23. What happens if a resource becomes NON_COMPLIANT?
+
+**Answer:**  
+AWS Config marks the resource as NON_COMPLIANT and can trigger:
+- notifications,
+- Lambda remediation,
+- or automated workflows.
+
+---
+
+# Security & Compliance Questions
+
+## 24. Can AWS Config track IAM changes?
+
+**Answer:**  
+Yes, AWS Config can track IAM resource configuration changes.
+
+---
+
+## 25. What compliance standards can AWS Config help with?
+
+**Answer:**
+- PCI-DSS
+- HIPAA
+- SOC
+- ISO
+- CIS benchmarks
+
+---
+
+# Quick Revision
+
+| Topic | Important Concept |
+|---|---|
+| Monitoring | Resource tracking |
+| Compliance | Config Rules |
+| Automation | Lambda remediation |
+| Auditing | Configuration history |
+| Security | Misconfiguration detection |
+| Multi-account | Config Aggregator |
+| Notifications | SNS/EventBridge |
+
+```
+
+## Steps to work with AWS Config
+
+### Create a custom Lambda rule to check if the EC2 instance is using the latest AMI.
+
+### Steps to create aws config rule using custom Lambda function.
+1. Create a new Lambda function.
+2. Runtime: Python 3.12.
+3. Give the permission to the Lambda function to access the EC2 instance.
+ - AmazonEC2FullAccess (To access the EC2 instance)
+ - AWS_ConfigRole (To access the AWS Config)
+ - AWSCloudTrail_FullAccess (To access the CloudTrail)
+ - CloudWatchFullAccess (To access the CloudWatch)
+4. Write a code to check if the EC2 has monitoring option enabled.
+
+```python 
+import boto3
+import json
+
+def lambda_handler(event, context):
+
+    # Get the specific EC2 instance.
+    ec2_client = boto3.client('ec2')
+    
+    # Assume compliant by default
+    compliance_status = "COMPLIANT"  
+    
+    # Extract the configuration item from the invokingEvent
+    config = json.loads(event['invokingEvent'])
+    
+    configuration_item = config["configurationItem"]
+    
+    # Extract the instanceId
+    instance_id = configuration_item['configuration']['instanceId']
+    
+    # Get complete Instance details
+    instance = ec2_client.describe_instances(InstanceIds=[instance_id])['Reservations'][0]['Instances'][0]
+    
+    # Check if the specific EC2 instance has Cloud Trail logging enabled.
+    
+    if not instance['Monitoring']['State'] == "enabled":
+        compliance_status = "NON_COMPLIANT"
+
+    evaluation = {
+        'ComplianceResourceType': 'AWS::EC2::Instance',
+        'ComplianceResourceId': instance_id,
+        'ComplianceType': compliance_status,
+        'Annotation': 'Detailed monitoring is not enabled.',
+        'OrderingTimestamp': config['notificationCreationTime']
+    }
+    
+    config_client = boto3.client('config')
+    
+    response = config_client.put_evaluations(
+        Evaluations=[evaluation],
+        ResultToken=event['resultToken']
+    )  
+    
+    return response
+```
+
+```bash
+This Lambda function is triggered by AWS Config whenever an EC2 instance configuration changes.
+It checks whether detailed monitoring is enabled on the EC2 instance.
+If monitoring is enabled, the instance is marked as COMPLIANT; otherwise NON_COMPLIANT.
+```
+
+1. Go to AWS Config Console.
+2. Click on Rules and add a new rule.
+3. Select the rule type as `Create custon Lambda rule`.
+4. Give a name to the rule.
+5. Provide the lambda function ARN.
+6. Trigger type: When Configuration changes.
+    - Click on respource type: EC2 instance.
+7. Save
+
+

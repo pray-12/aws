@@ -1,0 +1,407 @@
+# What is Application Migration?
+
+Application migration means:
+
+> Moving an application from on-premises infrastructure or another cloud platform to AWS Cloud.
+
+This includes migrating:
+- Servers
+- Applications
+- Databases
+- Storage
+- Networking
+- Configurations
+
+# Real-Time Example
+
+Suppose a company has:
+
+```text
+Application running in local data center
+```
+
+Components:
+- Web Server
+- Application Server
+- Database Server
+
+They want:
+- Auto scaling
+- High availability
+- Less infrastructure maintenance
+
+So they migrate the application to AWS.
+
+---
+
+# Basic Migration Architecture
+
+## Before Migration
+
+```text
+Users
+   ↓
+On-Premises Data Center
+ ├── Web Server
+ ├── Application Server
+ └── Database Server
+```
+
+---
+
+## After Migration
+
+```text
+Users
+   ↓
+AWS Cloud
+ ├── EC2 Web Servers
+ ├── EC2 App Servers
+ ├── RDS Database
+ └── S3 Storage
+```
+
+# Types of Application Migration Strategies (6 Rs)
+
+AWS migration strategies are commonly called:
+
+# The 6 Rs
+
+1. Rehost
+2. Replatform
+3. Repurchase
+4. Refactor
+5. Retire
+6. Retain
+
+---
+
+# 1. Rehost (Lift and Shift)
+
+## What is Rehost?
+
+Moving applications to AWS without changing the application code.
+
+Also called "Lift and Shift".
+
+## Real-Time Scenario
+
+Company wants:
+- Fast migration
+- Minimum changes
+- Low risk
+
+Use Rehost.
+
+## AWS Services Used
+
+- AWS Application Migration Service (MGN)
+- EC2
+- EBS
+
+## Advantages
+
+- Fast migration
+- Low risk
+- Easy implementation
+
+---
+
+## Disadvantages
+
+- Application may not be cloud optimized
+- Higher long-term cost
+
+# 2. Replatform
+
+## What is Replatform?
+
+Making small optimizations during migration without changing core architecture.
+
+## Real-Time Scenario
+
+Company wants:
+- Better performance
+- Reduced operational effort
+- Minimal code changes
+
+Use Replatform.
+
+---
+
+## AWS Services Used
+
+- Amazon RDS
+- Elastic Beanstalk
+- ECS
+
+---
+
+## Advantages
+
+- Better cloud optimization
+- Reduced maintenance
+- Improved scalability
+
+# 3. Repurchase
+
+## What is Repurchase?
+
+Replacing existing application with a SaaS product.
+
+Also called:
+- Drop and Shop
+
+## Real-Time Scenario
+
+Company wants:
+- No infrastructure management
+- Modern SaaS solution
+
+Use Repurchase.
+
+## Advantages
+
+- Reduced maintenance
+- Faster modernization
+
+## Disadvantages
+
+- Vendor dependency
+- Possible retraining required
+
+# 4. Refactor / Re-Architect
+
+## What is Refactor?
+
+Redesigning the application to become cloud-native.
+
+---
+
+## Example
+
+Monolithic application converted into:
+- Microservices
+- Containers
+- Serverless
+
+---
+
+## Real-Time Scenario
+
+Company wants:
+- Auto scaling
+- High agility
+- Cloud-native architecture
+
+Use Refactor.
+
+## AWS Services Used
+
+- ECS
+- EKS
+- Lambda
+- API Gateway
+
+## Advantages
+
+- Maximum scalability
+- Better performance
+- Fully cloud optimized
+
+## Disadvantages
+
+- High cost
+- More development effort
+- Longer migration time
+
+# 5. Retire
+
+## What is Retire?
+
+Shutting down applications that are no longer needed.
+
+## Example
+
+```text
+Unused legacy payroll application removed
+```
+
+## Real-Time Scenario
+
+During migration assessment, company finds:
+- Old applications unused
+- No business value
+
+Applications are retired.
+
+## Advantages
+
+- Reduces cost
+- Simplifies infrastructure
+
+# 6. Retain
+
+## What is Retain?
+
+Keeping some applications on-premises temporarily.
+
+## Example
+
+Applications with:
+- Compliance requirements
+- Licensing issues
+- Technical limitations
+
+remain on-premises.
+
+## Real-Time Scenario
+
+Company decides:
+- Some apps move to AWS
+- Some remain in data center
+
+This is hybrid architecture.
+
+# Typical Migration Process
+
+# Step 1: Assessment
+
+Analyze:
+- Servers
+- Applications
+- Dependencies
+- Costs
+
+---
+
+# Step 2: Planning
+
+Decide:
+- Migration strategy
+- Downtime plan
+- Security requirements
+
+---
+
+# Step 3: Migration
+
+Move:
+- Servers
+- Databases
+- Storage
+
+---
+
+# Step 4: Testing
+
+Verify:
+- Performance
+- Connectivity
+- Security
+- Application functionality
+
+---
+
+# Step 5: Optimization
+
+Optimize:
+- Auto Scaling
+- Load Balancers
+- Monitoring
+- Cost
+
+---
+
+# Real-Time Example
+
+## Traditional Architecture
+
+```text
+Users
+   ↓
+Physical Server
+   ↓
+Application
+   ↓
+Database
+```
+
+---
+
+## AWS Cloud Architecture
+
+```text
+Users
+   ↓
+Application Load Balancer
+   ↓
+Auto Scaling EC2 Instances
+   ↓
+Amazon RDS
+   ↓
+Amazon S3
+```
+
+---
+
+# Common Interview Questions
+
+## Q1. What are the 6 Rs of migration?
+
+### Answer
+
+1. Rehost
+2. Replatform
+3. Repurchase
+4. Refactor
+5. Retire
+6. Retain
+
+---
+
+## Q2. What is Lift and Shift migration?
+
+### Answer
+
+Lift and Shift means moving applications to AWS without changing the application architecture.
+
+---
+
+## Q3. Difference between Rehost and Refactor?
+
+| Rehost | Refactor |
+|---|---|
+| Minimal changes | Complete redesign |
+| Faster migration | Longer migration |
+| Less cost initially | Higher implementation cost |
+| Not cloud optimized | Fully cloud native |
+
+---
+
+## Q4. Which AWS service is used for database migration?
+
+### Answer
+
+AWS Database Migration Service (DMS).
+
+---
+
+## Q5. Which AWS service is used for server migration?
+
+### Answer
+
+AWS Application Migration Service (MGN).
+
+---
+
+# One-Line Summary
+
+| Strategy | Meaning |
+|---|---|
+| Rehost | Move as-is |
+| Replatform | Small optimizations |
+| Repurchase | Replace with SaaS |
+| Refactor | Redesign application |
+| Retire | Remove unused apps |
+| Retain | Keep on-premises |

@@ -1,0 +1,262 @@
+# DynamoDB Interview Questions for DevOps Engineers
+
+## 1. What is DynamoDB?
+
+**Answer:**  
+DynamoDB is a fully managed NoSQL database service provided by AWS that offers:
+- high scalability,
+- low latency,
+- automatic scaling,
+- and high availability.
+
+---
+
+## 2. Is DynamoDB SQL or NoSQL?
+
+**Answer:**  
+DynamoDB is a NoSQL database.
+
+---
+
+## 3. What are the advantages of DynamoDB?
+
+**Answer:**
+- Fully managed
+- Serverless
+- Automatic scaling
+- High availability
+- Low latency
+- Easy AWS integration
+
+---
+
+## 4. When would you use DynamoDB?
+
+**Answer:**  
+DynamoDB is commonly used for:
+- serverless applications,
+- IoT applications,
+- gaming,
+- session management,
+- real-time applications,
+- and high-traffic systems.
+
+---
+
+# DevOps Focused Questions
+
+## 5. How do you monitor DynamoDB?
+
+**Answer:**  
+DynamoDB can be monitored using:
+- CloudWatch metrics,
+- alarms,
+- CloudTrail logs,
+- and DynamoDB monitoring metrics.
+
+Important metrics:
+- Read throttles
+- Write throttles
+- Latency
+- Consumed capacity
+- System errors
+
+---
+
+## 6. What is throttling in DynamoDB?
+
+**Answer:**  
+Throttling occurs when requests exceed the provisioned read/write capacity.
+
+---
+
+## 7. How do you prevent throttling?
+
+**Answer:**
+- Enable auto scaling
+- Increase capacity units
+- Use proper partition keys
+- Use DAX caching
+
+---
+
+## 8. What is a hot partition?
+
+**Answer:**  
+A hot partition occurs when too much traffic goes to a single partition key causing uneven load distribution.
+
+---
+
+## 9. Why is partition key design important?
+
+**Answer:**  
+Proper partition key design ensures:
+- even traffic distribution,
+- better scalability,
+- and avoids hot partitions.
+
+---
+
+# Security Questions
+
+## 10. How do you secure DynamoDB?
+
+**Answer:**
+- IAM policies
+- Encryption at rest
+- TLS encryption
+- VPC endpoints
+- Least privilege access
+
+---
+
+## 11. Can DynamoDB be encrypted?
+
+**Answer:**  
+Yes, DynamoDB supports encryption at rest using AWS KMS keys.
+
+---
+
+# Backup & Recovery
+
+## 12. What backup options are available in DynamoDB?
+
+**Answer:**
+- On-demand backups
+- Point-in-time recovery (PITR)
+- AWS Backup integration
+
+---
+
+## 13. What is Point-in-Time Recovery (PITR)?
+
+**Answer:**  
+PITR allows restoring a DynamoDB table to any second within the retention period.
+
+---
+
+# Scaling Questions
+
+## 14. How does DynamoDB scale?
+
+**Answer:**  
+DynamoDB scales horizontally by automatically partitioning data across multiple servers.
+
+---
+
+## 15. What is auto scaling in DynamoDB?
+
+**Answer:**  
+Auto scaling automatically adjusts read and write capacity based on workload traffic.
+
+---
+
+# CI/CD & Automation Questions
+
+## 16. How would you deploy DynamoDB using Infrastructure as Code?
+
+**Answer:**  
+Using:
+- Terraform
+- CloudFormation
+- AWS CDK
+
+---
+
+## 17. How do DevOps engineers use DynamoDB Streams?
+
+**Answer:**  
+DynamoDB Streams capture table changes and can trigger Lambda functions for:
+- automation,
+- event-driven workflows,
+- and notifications.
+
+---
+
+# Comparison Questions
+
+## 18. DynamoDB vs RDS?
+
+| DynamoDB | RDS |
+|---|---|
+| NoSQL | Relational |
+| Serverless scaling | Vertical scaling |
+| Flexible schema | Fixed schema |
+| High scalability | Complex queries |
+
+---
+
+## 19. DynamoDB vs MongoDB?
+
+| DynamoDB | MongoDB |
+|---|---|
+| Fully managed AWS service | More flexible querying |
+| AWS-native | Multi-cloud |
+| Serverless | More customization |
+
+---
+
+# Scenario-Based Questions
+
+## 20. Your DynamoDB table is getting throttled. What will you do?
+
+**Answer:**  
+I would:
+- check CloudWatch metrics,
+- enable auto scaling,
+- analyze partition key distribution,
+- increase capacity,
+- and consider DAX caching.
+
+---
+
+## 21. How would you monitor DynamoDB in production?
+
+**Answer:**  
+Using:
+- CloudWatch dashboards,
+- alarms,
+- CloudTrail logs,
+- and monitoring latency/throttling metrics.
+
+---
+
+## 22. How do you automate DynamoDB infrastructure?
+
+**Answer:**  
+Using Terraform or CloudFormation integrated into CI/CD pipelines.
+
+---
+
+# Advanced Questions
+
+## 23. What is DynamoDB Global Tables?
+
+**Answer:**  
+Global Tables replicate DynamoDB tables across multiple AWS regions for:
+- low-latency access,
+- high availability,
+- and disaster recovery.
+
+---
+
+## 24. What is DynamoDB DAX?
+
+**Answer:**  
+DAX (DynamoDB Accelerator) is an in-memory cache that improves DynamoDB read performance.
+
+---
+
+# Quick Revision
+
+| Topic | Important Concept |
+|---|---|
+| Monitoring | CloudWatch |
+| Security | IAM + Encryption |
+| Scaling | Auto Scaling |
+| Backup | PITR |
+| IaC | Terraform/CloudFormation |
+| Performance | Partition Keys |
+| Automation | Streams + Lambda |
+
+```
