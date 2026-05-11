@@ -1,0 +1,426 @@
+# Highly Available 3-Tier Application Architecture
+
+![](/project/architecture.png)
+
+*******************************************
+Steps for Setting Up the Project Infrastructure
+*******************************************
+
+Github Repo: https://github.com/pray-12/aurora-aws-3-tier-architecture-project
+It's a React JS Application with a backend API.
+
+## Step 1: VPC Creation
+- Name -  `3-tier-app-vpc`
+- IPV4 CIDR block - 192.168.0.0/22
+- Number of AZ's -2
+- NUmber of public subnets - 2 and private - 4.
+- NAT gateway - Zonal - in 1 AZ.
+- VPC endpoint - None
+- Create VPC.
+![](/project/image-1.png)
+![](/project/image-2.png)
+
+## Create Security groups
+Total 5 SG we need.
+### 1. External LoadBalancer 
+- Name: `Web-ALB-SG`
+- VPC: Custom VPC [3-tier-app-vpc]
+- Inbound rules: 
+ - HTTP - TCP[Protocol] - Portrange-80 ,Source[anywhere-IPV4]
+- Create SG.
+
+### 2. Web Tier
+- Name: `Web-Tier-SG`
+- VPC: Custom VPC [3-tier-app-vpc]
+- - Inbound rules: 
+    - HTTP - TCP[Protocol] - Portrange-80 ,Source[Custom - ALB-SG] [Through loadbalancer sg only traffic should come]. 
+    - HTTPS - TCP[Protocol] - Portrange-80 ,Source[Custom - 192.168.0.0/22] [For internal traffic to the VPC]. 
+
+### 3. App Tier
+- Name: `App-SG`
+- VPC: Custom VPC [3-tier-app-vpc]
+- - Inbound rules: 
+    - HTTP - TCP[Protocol] - Portrange-4000[Default port of react application] ,Source[Custom - 192.168.0.0/22] [For internal traffic to the VPC from App Tier]. 
+
+### 4. Internal Load Balancer
+- Name: `Internal-LB-SG`
+- VPC: Custom VPC [3-tier-app-vpc]
+- - Inbound rules: 
+    - HTTP - TCP[Protocol] - Portrange- 80 ,Source[Custom - CIDR - 192.168.0.0/22] [internal traffic to the VPC from App Tier]. 
+- Create SG.
+
+### 5. Database Tier
+- Name: `Database`
+- VPC: Custom VPC [3-tier-app-vpc]
+- - Inbound rules: 
+    - MySQL - TCP[Protocol] - Portrange-3306[Default port of MySQL] ,Source[Custom - CIDR - 192.168.0.0/22] [For internal traffic to the VPC]. 
+
+![](/project/image-3.png)
+
+## Step 2: S3 Bucket and IAM Role Setup
+- Create an S3 bucket and upload the application code.
+  - Name: `3-tier-app-s3-bucket`
+  - Region: `ap-south-1`
+  - Block public access: `Enabled`
+  - Versioning: `Enabled`
+  - Encryption: `Enabled`
+  - Create bucket.
+  - Upload the application code to the S3 bucket.
+
+  https://github.com/pray-12/aurora-aws-3-tier-architecture-project
+
+![](/project/image-4.png)
+  
+- Set up an IAM role with the necessary permissions and attach it to the EC2 instance.
+
+We have 2 EC2 instances for App Tier and Web Tier. So we need to create 2 IAM roles. Because we have app in private subnets and we don't want to give access to the internet to the app servers.
+
+- If you have two EC2 instances (one for the App Tier and one for the Web Tier), it is a best practice to create `separate IAM roles` for each instance, especially since your App Tier servers are in private subnets without direct internet access.
+- To connect from the App servers (in private subnets) to the database, you generally have these options:
+  1. Bastion Host: You can set up a Bastion Host in a public subnet, which acts as a jump box to securely access resources in private subnets.
+  2. AWS Systems Manager (SSM) Agent: By installing the SSM agent on your App servers and attaching an appropriate IAM role, you can securely connect to these servers without needing a Bastion Host or opening them to the internet. The SSM agent enables features such as Session Manager for secure shell access, and may also support database connectivity through port forwarding.
+
+- Using the SSM agent requires an IAM role with permissions for Systems Manager (such as `AmazonSSMManagedInstanceCore`) to be attached to the EC2 instances you wish to manage.
+
+We need IAM role to work with SSM agent.
+
+1. Click on IAM service.
+2. Click on "Roles".
+3. Click on "Create role".
+  - Entity-type: AWS service
+  - Use case: EC2
+  - Permissions: `AmazonEC2RoleForSSM` why ? Because our application code is in S3 bucket and we need to access it from the EC2 instance.
+4. Role name: `App-Tier-IAM-Role`
+5. Create role.
+
+## Step 3: Database Configuration
+Launch and configure an RDS instance to serve as the backend database.
+1. Create DB subnet group.
+  - Name: `subnet-group`
+  - VPC: Custom VPC [3-tier-app-vpc]
+  - AZ: - 2 AZ's
+  - Subnet: - DB subnet[Private Subnet-private-3 & private-4] in each AZ.
+  - Create subnet group.
+  ![](/project/image-5.png)
+2. Create database instance.
+  - Engine: MySQL
+  - Template: Free Tier [Note: We can't create multi AZ RDS instance in free tier]
+  - Select VPC: Custom VPC [3-tier-app-vpc]
+  - Select Subnet group: `subnet-group`
+  - Publicly accessible: No
+  - VPC security group: Custom SG [Database-SG]
+  - Backup: disabled [We don't need backup in free tier we will be charged for that]
+  - Create database instance.
+  - We will get a endpoint like this: `database-1.c380a08uukyc.ap-south-1.rds.amazonaws.com`
+
+## Step 4: Application Tier Setup
+Deploy application-tier resources, including the configuration of an internal load balancer for traffic distribution within the tier.
+
+I will launch a EC2 in stance in private subnet and from this instance i will connect to the database and then i will do the configuration required for the application.
+
+1. Launch a EC2 instance in private subnet.
+  - Name: `app-tier-ec2`
+  - AMI: Amazon Linux 2AMI
+  - No key pair. We will use SSM agent to connect to the instance.
+  - VPC: Custom VPC [3-tier-app-vpc]
+  - Subnet: Private Subnet [private-1 or private-2]
+  - Security group: Custom SG [App-SG] [We will allow traffic from the web tier to the app tier. We will allow traffic from the app tier to the database.]
+  - IAM role: `App-Tier-IAM-Role`
+  - Launch instance.
+  - CLick on connect and then click on Session Manager.
+2. Install MySQL
+
+```bash
+sudo su
+cd ..
+cd /home/ec2-user
+sudo dnf install mariadb105 -y
+```
+
+3. Configure MySQL Database
+Connect to the database and perform basic configuration: Replace below info with your DB information
+
+```bash
+mysql -h <DB EndPoint> -u admin -p ----> Enter the Password i.e admin1234 (this is DB password). 
+```
+
+Go to the RDS instance and copy the endpoint.
+
+Ex: mysql -h database-1.c10oow2acg12.ap-south-1.rds.amazonaws.com -u admin -p [This is the endpoint of the RDS instance]
+
+Lets create a database. The database name i'm creating is "webappdb" (This is same name that you should give in DvConfig.js file);
+
+```bash
+CREATE DATABASE webappdb;
+SHOW DATABASES;
+USE webappdb; ----> You will see 'Database changed'
+```
+
+Execute the below code as a single code. Here we are creating a table with the name 'transactions'
+
+```bash
+CREATE TABLE IF NOT EXISTS transactions(
+  id INT NOT NULL AUTO_INCREMENT, 
+  amount DECIMAL(10,2), 
+  description VARCHAR(100), 
+  PRIMARY KEY(id)
+);
+SHOW TABLES;
+```
+
+Lets insert some info into the table
+
+```bash
+INSERT INTO transactions (amount, description) VALUES ('400', 'groceries');
+```
+
+To verify whether the entry is really created or not
+
+
+```bash
+SELECT * FROM transactions;
+---
+To come out of the DB;
+
+```bash
+exit (You will see 'ec2-user' at the end of command line and at the beginning of command line you will see 'root')
+```
+
+Update Application Configuration to with DB information
+Update the **application-code/app-tier/DbConfig.js** file with your database credentials.
+```bash
+module.exports = Object.freeze({
+    DB_HOST: 'YOUR-DATABASE-ENDPOINT.ap-south-1.rds.amazonaws.com',
+    DB_USER: 'admin',
+    DB_PWD: 'kastro2025',
+    DB_DATABASE: 'webappdb'
+});
+```
+
+Install and Configure Node.js and PM2 because our application is a Node.js application.
+
+```bash
+curl -o- https://raw.githubusercontent.com/avizway1/aws_3tier_architecture/main/install.sh | bash
+source ~/.bashrc
+```
+
+```bash
+nvm install 16 # Install node version 16
+nvm use 16 # Use node version 16
+```
+
+NVM means Node Version Manager
+ Because we have to install node version 16 and we have to use it.
+
+To run node as a service, we will install pm2
+
+```bash
+npm install -g pm2 (You will see 'found 0 vulnerabilities)
+```
+Now switch the path 
+
+```bash
+cd .. or cd ~/
+```
+
+Now copy the application code from S3 bucket to the EC2 instance.
+```bash
+sudo aws s3 cp s3://<S3BucketName>/application-code/app-tier/ app-tier --recursive
+ls ----> You will see 'app-tier' folder
+cd app-tier/ 
+npm install
+ls ----> You will see 'index.js' file. We have to start that.
+pm2 start index.js (You will see the status as 'online')
+```
+
+
+![](/project/image-6.png)
+
+To verify;
+```bash
+pm2 list (or) pm2 status
+pm2 logs (You will not see anything in red colour, everything in white colour you should see)
+```
+
+At the end you will see something like; http://localhost:4000
+
+```bash
+pm2 startup # To save the configuration at the startup of the instance.
+pm2 save # To save the configuration	
+```
+
+Verify that the application is running by executing
+```bash
+curl http://localhost:4000/health
+```
+It should return: This is the health check.
+
+With this we have completed the application configuration.
+
+![](/project/image-7.png)
+
+Now create a Internal Load Balancer for the App Tier. by the DNS name we will update the nginx.conf file and then we will upload the file to the S3 bucket.
+
+Create target group for the Internal Load Balancer.
+- Name: `app-tier-tg-internal-lb`
+- health check path: `/health`
+- Select the instance in the same subnet as the Internal Load Balancer.
+- Click on include as pending below.
+- Create target group.
+
+Create Load Balancer.
+- Name: `app-tier-internal-lb`
+- Scheme: Internal
+- VPC: Custom VPC [3-tier-app-vpc]
+- Subnet: Private Subnet [private-1 or private-2]
+- Security group: Custom SG [Internal-LB-SG]
+- Listeners:
+  - Protocol: HTTP
+  - Port: 80
+  - Target Group: `app-tier-tg-internal-lb`
+- Create Load Balancer.
+
+- open the nginx.conf file and update the following Listeners.
+
+```bash
+location /api/ {
+            proxy_pass internal-app-tier-internal-lb-724730177.ap-south-1.elb.amazonaws.com:80/;
+        }
+```
+
+
+Upload the updated nginx.conf file to the S3 bucket
+
+## Step 5: Web Tier Setup
+Provision web-tier resources and set up an external load balancer to manage incoming traffic from users.
+
+1. Launch a EC2 instance in public subnet.
+  - Name: `web-tier-ec2`
+  - AMI: Amazon Linux 2AMI
+  - No key pair. We will use SSM agent to connect to the instance.
+  - VPC: Custom VPC [3-tier-app-vpc]
+  - Subnet: Public Subnet [public-1 or public-2]
+  - Security group: Custom SG [Web-Tier-SG] [We will allow traffic from the web tier to the app tier.]
+  - IAM role: `App-Tier-IAM-Role`
+  - Launch instance.
+  - CLick on connect and then click on Session Manager.
+
+```bash
+sudo -su ec2-user (To work as an ec2-user)    
+cd /home/ec2-user
+curl -o- https://raw.githubusercontent.com/avizway1/aws_3tier_architecture/main/install.sh | bash
+source ~/.bashrc
+nvm install 16
+nvm use 16
+```
+
+```bash
+aws s3 cp s3://<S3 Bucker Name>/application-code/web-tier/ web-tier --recursive
+Ex: aws s3 cp s3://3-tier-app-s3-bucket/application-code/web-tier/ web-tier --recursive
+
+ls ----> You will see 'web-tier'
+
+```bash
+cd web-tier
+npm install
+npm run build
+```
+
+```bash
+sudo amazon-linux-extras install nginx1 -y
+or
+sudo dnf install nginx -y
+```
+
+Update Nginx configuration:
+
+```bash
+cd /etc/nginx (Your are in nginx path)
+ls ----> You will see 'nginx.conf' file
+```
+
+Remove the existing nginx.conf file and copy the new one from the S3 bucket.
+```bash
+sudo rm nginx.conf
+sudo aws s3 cp s3://3-tier-app-s3-bucket/application-code/nginx.conf .
+```
+
+```bash
+sudo service nginx restart
+```
+
+```bash
+chmod -R 755 /home/ec2-user
+sudo chkconfig nginx on
+```
+
+
+To check the output of the App, we can check using the Web-Tier-Instance public IP. But before checking lets open port no 80 with http, Anywhere IPv4, 0.0.0.0/0 ---> Save rules ----> Now paste the pubic ip of Web-Tier-Instance in new tab of browser ----> You will see the app ----> Enter the data in the app
+
+
+This is about 3 tier architecture with HA and Fault Tolerance.
+
+
+We can't give external load balancer url to the user we need to provide domain name url to the user.
+
+To create a domain name we need to create a Route 53 record.
+
+We need to create a Web external load balancer and then we can create a domain name and then we can map the domain name to the external load balancer.
+
+1. Careate a Target Group for the Web External Load Balancer.
+- Name: `web-tier-tg-external-lb`
+- VPC: VPC: Custom VPC [3-tier-app-vpc]
+- health check path: /health
+- Register targets: Only `Web Tier App` then include on pending group
+
+2. Create A load blancer name: `External-Web-ALB`
+- Network: `demo-vpc`
+- Subnet: Public Subnet [public-1 or public-2]
+- Security group: Custom SG [Web-ALB-SG]
+- Listeners:
+  - Protocol: HTTP
+  - Port: 80
+  - Target Group: `web-tier-tg-external-lb`
+- Create Load Balancer.
+- We will get a DNS name like this: `external-web-alb-1234567890.ap-south-1.elb.amazonaws.com`
+- We will use this DNS name to connect to the application from the user.
+
+3. Purchasing domain use route 53
+- Go to route 53 and click on register domain. If  u have a domain from another provider like `go daddy` u can transfer the domain.
+
+- After purchasing the domain, we need to create a record in route 53.
+- Go to route 53 and click on create record set.
+- Type: A
+- Name: `www`
+- Value: `external-web-alb-1234567890.ap-south-1.elb.amazonaws.com`
+- TTL: 300
+- Create record set.
+
+4. Go to certificate manager and create a certificate for the domain name.
+- Name: `external-web-alb-certificate`
+- Domain name: `www.yourdomain.com`
+- Create certificate.
+- We will get a certificate ARN like this: `arn:aws:acm:ap-south-1:123456789012:certificate/123456789012`
+- NOw  got to domain and create DNS record in Route 53.
+- Check domain and that's it.
+- Now go to the external load balancer and create a listener and map the domain name to the external load balancer.
+  - Select the Protocol as HTTPS and then select the certificate and then map the domain name to the external load balancer.
+
+4. SSL Certification and Domain Mapping
+Generate an SSL certificate and apply it to the external load balancer to ensure secure communication.
+Map the domain name to the external load balancer for public accessibility.
+
+
+Delete everything once its done
+First delete ASG
+Next delete both LBs
+Next delete both TGs
+Next delete both AMIs
+Next delete both Snapshots of AMIs
+Next delete DB
+Next delete S3 Bucket
+Next delete Certificate
+Next delete Route 53 record
+Next delete NAT GW
+Next delete Elastic IP. This came because of NATGW
+Next delete VPC
