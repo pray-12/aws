@@ -2,6 +2,7 @@
 
 Elastic Load Balancing is a service that automatically distributes incoming traffic to multiple resources, such as Amazon EC2 instances, containers, and IP addresses, in a single or multiple Availability Zones (AZs). It helps to ensure that your application remains available and responsive even if some of the resources become unavailable.
 
+ALB operates at Layer 7 and is used for HTTP/HTTPS applications. It can route traffic based on things like hostnames and URL paths. NLB operates at Layer 4 and is used for high-performance TCP, UDP or TLS traffic where we mainly care about IP addresses and ports. GWLB is designed to deploy and scale network and security appliances such as firewalls and IDS/IPS, allowing traffic to pass through those appliances.
 # Types of Load Balancers in AWS
 
 AWS provides load balancing through **Elastic Load Balancing (ELB)**.
